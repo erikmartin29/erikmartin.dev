@@ -31,7 +31,7 @@ export default async function ProjectsPage() {
   return (
     <div className="space-y-12">
       <SectionHeading 
-        title="Selected Projects" 
+        title="Projects" 
         subtitle="A showcase of my technical skills and creative solutions."
       />
 
@@ -75,7 +75,7 @@ export default async function ProjectsPage() {
               )}
               {project.github && (
                 <Link href={project.github} className="flex-1" target="_blank">
-                  <GlassButton variant="secondary" className="w-full gap-2" size="sm">
+                  <GlassButton variant="primary" className="w-full gap-2" size="sm">
                     Code <Github size={16} />
                   </GlassButton>
                 </Link>
