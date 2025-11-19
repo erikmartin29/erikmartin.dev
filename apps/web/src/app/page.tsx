@@ -4,17 +4,33 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { sanityFetch } from "@/sanity/live";
 import { HOME_QUERY } from "@/sanity/queries";
 import { PortableText } from "@portabletext/react";
-import { ArrowRight, FileText, Github, Linkedin, Mail } from "lucide-react";
+import { ArrowRight, FileText, Github, Linkedin, Mail, User } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { urlFor } from "@/sanity/client";
 
 export default async function Home() {
   const { data } = await sanityFetch({ query: HOME_QUERY });
   const { home, profile, experience } = data || {};
+  
+  console.log("Profile Data:", JSON.stringify(profile, null, 2));
 
   return (
     <div className="flex flex-col gap-10">
       <section className="flex flex-col items-center text-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+        <div className="relative w-32 h-32 mb-2 overflow-hidden rounded-full shadow-lg shadow-accent/5 flex items-center justify-center">
+          {profile?.profileImage ? (
+            <Image
+              src={urlFor(profile.profileImage).width(256).height(256).url()}
+              alt={profile.fullName || "Profile Picture"}
+              fill
+              className="object-cover"
+              priority
+            />
+          ) : (
+            <User className="w-16 h-16 text-muted-foreground" />
+          )}
+        </div>
         {home?.availabilityStatus && (
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel text-sm font-medium text-accent mb-4">
             <span className="relative flex h-2 w-2">
