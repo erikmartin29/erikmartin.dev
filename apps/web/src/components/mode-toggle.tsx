@@ -23,7 +23,7 @@ export function ModeToggle() {
       <div className="flex items-center justify-center">
       {
         resolvedTheme === "dark" ? (
-          <Moon className="absolute h-[1rem] w-[1.2rem]" />
+          <Moon className="absolute h-[1.2rem] w-[1.2rem]" />
         ) : (
           <Sun className="absolute h-[1.2rem] w-[1.2rem]" />
         )
