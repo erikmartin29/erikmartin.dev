@@ -3,6 +3,7 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { Linkedin, Mail } from "lucide-react";
 import { sanityFetch } from "@/sanity/live";
 import { HOME_QUERY } from "@/sanity/queries";
+import type { HOME_QUERYResult } from "@/sanity/sanity.types";
 
 export const metadata = {
   title: "Contact | Erik Martin",
@@ -10,8 +11,10 @@ export const metadata = {
 };
 
 export default async function ContactPage() {
-  const { data } = await sanityFetch({ query: HOME_QUERY });
-  const { profile } = data || {};
+  const { data } = await sanityFetch<HOME_QUERYResult>({
+    query: HOME_QUERY,
+  });
+  const { profile } = data;
 
   return (
     <div className="space-y-12">

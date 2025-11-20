@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ExternalLink, Github } from "lucide-react";
 import { sanityFetch } from "@/sanity/live";
 import { PROJECTS_QUERY } from "@/sanity/queries";
+import type { PROJECTS_QUERYResult } from "@/sanity/sanity.types";
 import { urlFor } from "@/sanity/client";
 
 export const metadata = {
@@ -13,7 +14,9 @@ export const metadata = {
 };
 
 export default async function ProjectsPage() {
-  const { data: projects } = await sanityFetch({ query: PROJECTS_QUERY });
+  const { data: projects } = await sanityFetch<PROJECTS_QUERYResult>({
+    query: PROJECTS_QUERY,
+  });
 
   // Fallback data if no projects in CMS yet
   const displayProjects = projects && projects.length > 0 ? projects : [
@@ -36,13 +39,13 @@ export default async function ProjectsPage() {
       />
 
       <div className="grid md:grid-cols-2 gap-8">
-        {displayProjects.map((project: any) => (
+        {displayProjects.map((project) => (
           <GlassCard key={project._id} className="flex flex-col h-full" variant="hover">
             <div className="h-48 w-full bg-accent/5 rounded-xl mb-6 border border-white/10 flex items-center justify-center text-muted-foreground overflow-hidden relative group">
               {project.image ? (
                  <img 
                    src={urlFor(project.image).width(800).height(400).url()} 
-                   alt={project.title} 
+                   alt={project.title ?? "Project image"} 
                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                  />
               ) : (

@@ -2,10 +2,13 @@ import Link from "next/link";
 import { Github, Linkedin, Twitter } from "lucide-react";
 import { sanityFetch } from "@/sanity/live";
 import { FOOTER_QUERY } from "@/sanity/queries";
+import type { FOOTER_QUERYResult } from "@/sanity/sanity.types";
 
 export async function Footer() {
   const currentYear = new Date().getFullYear();
-  const { data: profile } = await sanityFetch({ query: FOOTER_QUERY });
+  const { data: profile } = await sanityFetch<FOOTER_QUERYResult>({
+    query: FOOTER_QUERY,
+  });
 
   return (
     <footer className="relative z-10 mt-auto pb-6 px-4 flex justify-center pointer-events-none">
