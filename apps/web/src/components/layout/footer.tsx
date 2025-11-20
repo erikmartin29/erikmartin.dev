@@ -8,7 +8,6 @@ export async function Footer() {
   const currentYear = new Date().getFullYear();
   const { data: profile } = await sanityFetch<FOOTER_QUERYResult>({
     query: FOOTER_QUERY,
-    tags: ["profile"],
   });
 
   return (

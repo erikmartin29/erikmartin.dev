@@ -16,8 +16,6 @@ export const metadata = {
 export default async function ProjectsPage() {
   const { data: projects } = await sanityFetch<PROJECTS_QUERYResult>({
     query: PROJECTS_QUERY,
-    // Projects page depends on `project` documents.
-    tags: ["project"],
   });
 
   // Fallback data if no projects in CMS yet

@@ -13,8 +13,6 @@ export const metadata = {
 export default async function ContactPage() {
   const { data } = await sanityFetch<HOME_QUERYResult>({
     query: HOME_QUERY,
-    // Contact page only needs `profile`, but it shares the same query as home.
-    tags: ["home", "profile", "experience", "project", "post"],
   });
   const { profile } = data;
 

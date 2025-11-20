@@ -14,7 +14,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { data: post } = await sanityFetch<POST_QUERYResult>({
     query: POST_QUERY,
     params: { slug },
-    tags: ["post"],
   });
   if (!post) return { title: "Post Not Found" };
   return {
@@ -28,7 +27,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const { data: post } = await sanityFetch<POST_QUERYResult>({
     query: POST_QUERY,
     params: { slug },
-    tags: ["post"],
   });
 
   if (!post) {

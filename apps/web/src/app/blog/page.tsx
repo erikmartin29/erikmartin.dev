@@ -15,8 +15,6 @@ export const metadata = {
 export default async function BlogPage() {
   const { data: posts } = await sanityFetch<BLOG_QUERYResult>({
     query: BLOG_QUERY,
-    // Blog index depends on `post` documents (and their categories).
-    tags: ["post"],
   });
 
   // Fallback posts if none in CMS
