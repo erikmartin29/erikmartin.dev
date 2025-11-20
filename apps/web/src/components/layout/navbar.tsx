@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, Briefcase, NotebookPen, Mail, Home } from "lucide-react";
+import { Briefcase, NotebookPen, Mail, Home } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/mode-toggle";
-import { useEffect, useRef, useState } from "react";
 
 const NAV_LINKS = [
   { href: "/", label: "Home", icon: Home },
@@ -17,42 +16,11 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const pathname = usePathname();
-  const [activeRect, setActiveRect] = useState({ left: 0, width: 0, opacity: 0 });
-  const tabsRef = useRef<(HTMLAnchorElement | null)[]>([]);
-
-  useEffect(() => {
-    const activeIndex = NAV_LINKS.findIndex(link => link.href === pathname);
-    const el = tabsRef.current[activeIndex];
-    
-    if (el) {
-      setActiveRect({
-        left: el.offsetLeft,
-        width: el.offsetWidth,
-        opacity: 1
-      });
-    } else {
-      // Fallback if no match (e.g. 404) or not mounted
-      setActiveRect(prev => ({ ...prev, opacity: 0 }));
-    }
-  }, [pathname]);
-
-  // Handle resize to update pill position
-  useEffect(() => {
-    const handleResize = () => {
-      const activeIndex = NAV_LINKS.findIndex(link => link.href === pathname);
-      const el = tabsRef.current[activeIndex];
-      if (el) {
-        setActiveRect({
-          left: el.offsetLeft,
-          width: el.offsetWidth,
-          opacity: 1
-        });
-      }
-    };
-    
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [pathname]);
+  const activeIndex = NAV_LINKS.findIndex((link) => link.href === pathname);
+  const hasActive = activeIndex !== -1;
+  const TAB_WIDTH = 40;
+  const GAP = 4;
+  const pillX = hasActive ? activeIndex * (TAB_WIDTH + GAP) : 0;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 p-4 md:p-6 pointer-events-none">
@@ -74,23 +42,21 @@ export function Navbar() {
           style={{ boxShadow: "0 8px 30px rgba(0, 0, 0, 0.06)" }}
         >
           <nav className="flex items-center gap-1 relative">
-            {/* Active Pill - Absolute Positioned based on Active Tab */}
             <motion.div
-              className="absolute top-0 bottom-0 bg-accent rounded-full -z-10"
+              className="absolute top-0 bottom-0 left-0 w-10 bg-accent rounded-full z-10"
               initial={false}
               animate={{
-                left: activeRect.left,
-                width: activeRect.width,
-                opacity: activeRect.opacity
+                x: pillX,
+                opacity: hasActive ? 1 : 0
               }}
-              transition={{ 
-                type: "spring", 
-                stiffness: 300, 
-                damping: 30 
+              transition={{
+                type: "spring",
+                stiffness: 2000,
+                damping: 60,
               }}
             />
 
-            {NAV_LINKS.map((link, index) => {
+            {NAV_LINKS.map((link) => {
               const isActive = pathname === link.href;
               const Icon = link.icon;
               
@@ -98,7 +64,6 @@ export function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  ref={el => { tabsRef.current[index] = el }}
                   className={cn(
                     "relative z-10 flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-200",
                     isActive ? "text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-white/10"

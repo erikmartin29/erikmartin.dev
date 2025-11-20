@@ -36,7 +36,7 @@ export const GlassButton = forwardRef<HTMLButtonElement, GlassButtonProps>(
       <Comp
         ref={ref}
         className={cn(
-          "relative inline-flex items-center justify-center rounded-full font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-95 overflow-hidden",
+          "relative inline-flex items-center justify-center rounded-full font-medium transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-95 overflow-hidden",
           
           // Variants
           variant === "primary" && [
