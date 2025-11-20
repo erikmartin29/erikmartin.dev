@@ -10,7 +10,13 @@ import Image from "next/image";
 import { urlFor } from "@/sanity/client";
 
 export default async function Home() {
-  const { data } = await sanityFetch({ query: HOME_QUERY });
+  const { data } = await sanityFetch({
+    query: HOME_QUERY,
+    // This page depends on multiple document types; these tags line up with
+    // the `_type` values used in your GROQ query so Sanity webhooks can
+    // trigger revalidation correctly.
+    tags: ["home", "profile", "experience", "project", "post"],
+  });
   const { home, profile, experience } = data || {};
   
   console.log("Profile Data:", JSON.stringify(profile, null, 2));

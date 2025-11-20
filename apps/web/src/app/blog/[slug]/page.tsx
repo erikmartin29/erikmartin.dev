@@ -11,7 +11,11 @@ import { notFound } from "next/navigation";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const { data: post } = await sanityFetch({ query: POST_QUERY, params: { slug } });
+  const { data: post } = await sanityFetch({
+    query: POST_QUERY,
+    params: { slug },
+    tags: ["post"],
+  });
   if (!post) return { title: "Post Not Found" };
   return {
     title: `${post.title} | Erik Martin`,
@@ -21,7 +25,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const { data: post } = await sanityFetch({ query: POST_QUERY, params: { slug } });
+  const { data: post } = await sanityFetch({
+    query: POST_QUERY,
+    params: { slug },
+    tags: ["post"],
+  });
 
   if (!post) {
     notFound();
