@@ -1,28 +1,17 @@
-import { SectionHeading } from "@/components/ui/section-heading";
 import { GlassCard } from "@/components/ui/glass-card";
 import { GlassButton } from "@/components/ui/glass-button";
 import Link from "next/link";
 import { ArrowLeft, Calendar } from "lucide-react";
 import { sanityFetch } from "@/sanity/live";
 import { POST_QUERY } from "@/sanity/queries";
+import type { POST_QUERYResult } from "@/sanity/sanity.types";
 import { PortableText } from "@portabletext/react";
 import { urlFor } from "@/sanity/client";
 import { notFound } from "next/navigation";
 
-type BlogPostData = {
-  _id: string;
-  title: string;
-  slug: { current: string };
-  mainImage?: unknown;
-  categories?: string[];
-  publishedAt: string;
-  body?: unknown;
-  excerpt?: string;
-};
-
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const { data: post } = await sanityFetch<BlogPostData | null>({
+  const { data: post } = await sanityFetch<POST_QUERYResult>({
     query: POST_QUERY,
     params: { slug },
     tags: ["post"],
@@ -30,13 +19,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!post) return { title: "Post Not Found" };
   return {
     title: `${post.title} | Erik Martin`,
-    description: post.excerpt,
+    description: post.title ?? undefined,
   };
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const { data: post } = await sanityFetch<BlogPostData | null>({
+  const { data: post } = await sanityFetch<POST_QUERYResult>({
     query: POST_QUERY,
     params: { slug },
     tags: ["post"],
@@ -61,9 +50,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               {post.categories[0]}
             </span>
           )}
-          <span className="flex items-center gap-1">
-            <Calendar size={14} /> {new Date(post.publishedAt).toLocaleDateString(undefined, { dateStyle: 'long' })}
-          </span>
+          {post.publishedAt && (
+            <span className="flex items-center gap-1">
+              <Calendar size={14} />{" "}
+              {new Date(post.publishedAt).toLocaleDateString(undefined, {
+                dateStyle: "long",
+              })}
+            </span>
+          )}
         </div>
 
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight">{post.title}</h1>
@@ -73,7 +67,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/10">
            <img 
              src={urlFor(post.mainImage).width(1200).height(675).url()} 
-             alt={post.title} 
+             alt={post.title ?? "Post image"} 
              className="w-full h-full object-cover"
            />
         </div>

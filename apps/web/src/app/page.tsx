@@ -3,6 +3,7 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { sanityFetch } from "@/sanity/live";
 import { HOME_QUERY } from "@/sanity/queries";
+import type { HOME_QUERYResult } from "@/sanity/sanity.types";
 import { PortableText } from "@portabletext/react";
 import { ArrowRight, FileText, Github, Linkedin, Mail, User } from "lucide-react";
 import Link from "next/link";
@@ -10,14 +11,14 @@ import Image from "next/image";
 import { urlFor } from "@/sanity/client";
 
 export default async function Home() {
-  const { data } = await sanityFetch({
+  const { data } = await sanityFetch<HOME_QUERYResult>({
     query: HOME_QUERY,
     // This page depends on multiple document types; these tags line up with
     // the `_type` values used in your GROQ query so Sanity webhooks can
     // trigger revalidation correctly.
     tags: ["home", "profile", "experience", "project", "post"],
   });
-  const { home, profile, experience } = data || {};
+  const { home, profile, experience } = data;
   
   console.log("Profile Data:", JSON.stringify(profile, null, 2));
 
@@ -105,22 +106,31 @@ export default async function Home() {
         
         <div className="grid gap-6">
           {experience && experience.length > 0 ? (
-            experience.map((job: any) => (
+            experience.map((job) => {
+              const startYear = job.startDate
+                ? new Date(job.startDate).getFullYear()
+                : undefined;
+              const endYear = job.endDate
+                ? new Date(job.endDate).getFullYear()
+                : "Present";
+
+              return (
               <GlassCard key={job._id} className="p-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
                   <div>
-                    <h3 className="text-xl font-bold">{job.role}</h3>
+                    <h3 className="text-xl font-bold">{job.jobTitle}</h3>
                     <p className="text-accent">{job.company}</p>
                   </div>
                   <span className="text-sm text-muted-foreground bg-white/5 px-3 py-1 rounded-full mt-2 md:mt-0 w-fit">
-                    {new Date(job.startDate).getFullYear()} - {job.endDate ? new Date(job.endDate).getFullYear() : 'Present'}
+                    {startYear ?? "Unknown"} - {endYear}
                   </span>
                 </div>
                 <div className="text-muted-foreground">
-                  <PortableText value={job.description} />
+                  {job.description && <PortableText value={job.description} />}
                 </div>
               </GlassCard>
-            ))
+              );
+            })
           ) : (
              // Fallback experience content so the page isn't empty before CMS data is added
              <>

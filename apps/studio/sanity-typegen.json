@@ -1,0 +1,6 @@
+{
+    "schema": "./schema.json",
+    "path": "../web/src/**/*.{ts,tsx}",
+    "generates": "../web/src/sanity/sanity.types.ts",
+    "overloadClientMethods": true
+  }
