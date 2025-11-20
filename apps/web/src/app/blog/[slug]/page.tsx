@@ -9,9 +9,20 @@ import { PortableText } from "@portabletext/react";
 import { urlFor } from "@/sanity/client";
 import { notFound } from "next/navigation";
 
+type BlogPostData = {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  mainImage?: unknown;
+  categories?: string[];
+  publishedAt: string;
+  body?: unknown;
+  excerpt?: string;
+};
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const { data: post } = await sanityFetch({
+  const { data: post } = await sanityFetch<BlogPostData | null>({
     query: POST_QUERY,
     params: { slug },
     tags: ["post"],
@@ -25,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const { data: post } = await sanityFetch({
+  const { data: post } = await sanityFetch<BlogPostData | null>({
     query: POST_QUERY,
     params: { slug },
     tags: ["post"],
