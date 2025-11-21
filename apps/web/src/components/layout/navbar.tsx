@@ -75,9 +75,6 @@ export function Navbar() {
               );
             })}
           </nav>
-          
-          {/* Theme Toggle */}
-          <ModeToggle />
         </div>
       </div>
     </header>
