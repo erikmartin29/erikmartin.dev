@@ -1,11 +1,12 @@
 import { SectionHeading } from "@/components/ui/section-heading";
 import { GlassCard } from "@/components/ui/glass-card";
 import Link from "next/link";
-import { Calendar, Clock, ArrowRight } from "lucide-react";
+import Image from "next/image";
+import { Calendar } from "lucide-react";
 import { sanityFetch } from "@/sanity/live";
 import { BLOG_QUERY } from "@/sanity/queries";
 import type { BLOG_QUERYResult } from "@/sanity/sanity.types";
-// import { urlFor } from "@/sanity/client"; // Not using images in list view currently but could
+import { urlFor } from "@/sanity/client";
 
 export const metadata = {
   title: "Blog | Erik Martin",
@@ -37,8 +38,7 @@ export default async function BlogPage() {
   return (
     <div className="space-y-12">
       <SectionHeading 
-        title="Latest Thoughts" 
-        subtitle="Insights, tutorials, and rants about the tech industry."
+        title="Latest Posts" 
       />
 
       <div className="grid gap-6">
@@ -46,34 +46,47 @@ export default async function BlogPage() {
           const slug = post.slug?.current;
           if (!slug) return null;
           return (
-          <Link key={post._id} href={`/blog/${slug}`} className="group">
-            <GlassCard variant="hover" className="p-6 md:p-8 flex flex-col md:flex-row gap-6 md:items-center justify-between">
-              <div className="flex flex-col gap-3 max-w-2xl">
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <Link key={post._id} href={`/blog/${slug}`} className="group block">
+            <GlassCard variant="hover" className="p-6 flex flex-row gap-6 items-start">
+              {post.mainImage && (
+                  <Image
+                    src={urlFor(post.mainImage).width(600).height(400).url()}
+                    alt={post.title || "Blog post image"}
+                    width={200}
+                    height={100}
+                    className="rounded-xl"
+                  />
+              )}
+              
+              <div className="flex flex-col gap-3 flex-1 min-w-0 pt-1">
+                <h2 className="text-2xl md:text-2xl font-bold group-hover:text-accent transition-colors leading-tight">
+                  {post.title}
+                </h2>
+                
+                <p className="text-muted-foreground line-clamp-2 text-sm md:text-base">
+                  {post.excerpt}
+                </p>
+
+                <div className="flex flex-col gap-2 text-xs text-muted-foreground mt-auto pt-2 items-start">
+                  {post.publishedAt && (
+                    <span className="flex items-center gap-1.5">
+                      <Calendar size={14}  />
+                      <p className="text-muted-foreground line-clamp-2 text-sm px-2">
+                      {new Date(post.publishedAt).toLocaleDateString(undefined, {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}
+                      </p>
+                    </span>
+                  )}
+
                   {post.categories && post.categories[0] && (
-                    <span className="text-accent font-medium px-2 py-0.5 rounded-full bg-accent/10">
+                    <span className="font-mono font-medium uppercase tracking-wider text-accent bg-accent/10 px-2 py-0.5 rounded-full text-[10px]">
                       {post.categories[0]}
                     </span>
                   )}
-                  {post.publishedAt && (
-                    <span className="flex items-center gap-1">
-                      <Calendar size={14} />{" "}
-                      {new Date(post.publishedAt).toLocaleDateString()}
-                    </span>
-                  )}
                 </div>
-                
-                <h3 className="text-2xl font-bold group-hover:text-accent transition-colors">
-                  {post.title}
-                </h3>
-                
-                <p className="text-muted-foreground line-clamp-2">
-                  {post.excerpt}
-                </p>
-              </div>
-
-              <div className="text-accent opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                <ArrowRight size={32} />
               </div>
             </GlassCard>
           </Link>

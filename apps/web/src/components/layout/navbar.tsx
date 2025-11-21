@@ -16,7 +16,9 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const pathname = usePathname();
-  const activeIndex = NAV_LINKS.findIndex((link) => link.href === pathname);
+  const activeIndex = NAV_LINKS.findIndex((link) => 
+    pathname === link.href || (link.href !== "/" && pathname.startsWith(`${link.href}/`))
+  );
   const hasActive = activeIndex !== -1;
   const TAB_WIDTH = 40;
   const GAP = 4;
@@ -28,7 +30,7 @@ export function Navbar() {
         {/* Full Name Logo - Left */}
         <Link 
           href="/" 
-          className="pointer-events-auto glass-panel flex items-center justify-center px-6 h-[60px] rounded-full hover:scale-[1.02] transition-all"
+          className="pointer-events-auto flex items-center justify-center px-6 h-[60px] rounded-full hover:scale-[1.02] transition-all"
           style={{ boxShadow: "0 8px 30px rgba(0, 0, 0, 0.06)" }}
         >
           <span className="text-lg font-bold tracking-tight">
@@ -56,8 +58,8 @@ export function Navbar() {
               }}
             />
 
-            {NAV_LINKS.map((link) => {
-              const isActive = pathname === link.href;
+            {NAV_LINKS.map((link, index) => {
+              const isActive = activeIndex === index;
               const Icon = link.icon;
               
               return (

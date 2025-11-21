@@ -36,18 +36,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   return (
     <div className="max-w-3xl mx-auto space-y-8">
       <Link href="/blog">
-        <GlassButton variant="ghost" size="sm" className="gap-2 -ml-4">
+        <GlassButton variant="ghost" size="sm" className="gap-2 -ml-4 mb-4">
           <ArrowLeft size={16} /> Back to Blog
         </GlassButton>
       </Link>
 
       <header className="space-y-6">
+        <h1 className="text-4xl md:text-5xl font-bold tracking-tight">{post.title}</h1>
         <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-          {post.categories && post.categories.length > 0 && (
-            <span className="text-accent font-medium px-2 py-0.5 rounded-full bg-accent/10">
-              {post.categories[0]}
-            </span>
-          )}
           {post.publishedAt && (
             <span className="flex items-center gap-1">
               <Calendar size={14} />{" "}
@@ -56,9 +52,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               })}
             </span>
           )}
+          {post.categories && post.categories.length > 0 && (
+            <span className="text-accent font-medium px-2 py-0.5 rounded-full bg-accent/10">
+              {post.categories[0]}
+            </span>
+          )}
         </div>
-
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight">{post.title}</h1>
       </header>
 
       {post.mainImage && (

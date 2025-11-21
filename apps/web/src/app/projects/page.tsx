@@ -46,7 +46,7 @@ export default async function ProjectsPage() {
                  <img 
                    src={urlFor(project.image).width(800).height(400).url()} 
                    alt={project.title ?? "Project image"} 
-                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                   className="absolute inset-0 w-full h-full object-cover"
                  />
               ) : (
                 <span className="text-sm">Project Screenshot</span>

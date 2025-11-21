@@ -49,12 +49,9 @@ export default async function ContactPage() {
             </div>
             <div>
               <h3 className="text-lg font-bold mb-1">LinkedIn</h3>
-              <p className="text-muted-foreground text-sm mb-2">
-                Message me on LinkedIn and/or connect.
-              </p>
               {profile?.socialLinks?.linkedin ? (
                  <a href={profile.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
-                   Connect on LinkedIn
+                   DM me on LinkedIn
                  </a>
               ) : (
                  <span className="text-muted-foreground">LinkedIn link unavailable</span>
@@ -62,7 +59,7 @@ export default async function ContactPage() {
             </div>
           </div>
         </GlassCard>
-      </div>
+      </div>s
     </div>
   );
 }

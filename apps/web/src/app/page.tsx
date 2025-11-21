@@ -63,17 +63,17 @@ export default async function Home() {
             <div className="flex items-center gap-2 px-4">
                {profile?.socialLinks?.github && (
                   <a href={profile.socialLinks.github} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-accent transition-colors p-2" aria-label="GitHub">
-                    <Github size={24} />
+                    <Github size={24} strokeWidth={1.5}/>
                   </a>
                 )}
                 {profile?.socialLinks?.linkedin && (
                    <a href={profile.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-accent transition-colors p-2" aria-label="LinkedIn">
-                    <Linkedin size={24} />
+                    <Linkedin size={24} strokeWidth={1.5}/>
                   </a>
                 )}
                 {profile?.email && (
                   <a href={`mailto:${profile.email}`} className="text-muted-foreground hover:text-accent transition-colors p-2" aria-label="Email">
-                    <Mail size={24} />
+                    <Mail size={24} strokeWidth={1.5} />
                   </a>
                 )}
             </div>
