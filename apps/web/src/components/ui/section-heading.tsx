@@ -22,7 +22,7 @@ export function SectionHeading({
       className
     )}>
       <h2 
-        className="text-3xl md:text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70"
+        className="text-3xl md:text-4xl font-bold tracking-tight bg-clip-text text-foreground"
         {...props}
       >
         {title}
@@ -35,4 +35,3 @@ export function SectionHeading({
     </div>
   );
 }
-
