@@ -21,17 +21,20 @@ export default async function Home() {
   return (
     <div className="flex flex-col gap-10">
       <section className="flex flex-col items-center text-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-        <div className="relative w-32 h-32 mb-2 overflow-hidden rounded-full shadow-lg shadow-accent/5 flex items-center justify-center">
+        <div 
+          className="relative mb-4 overflow-hidden rounded-full shadow-lg shadow-accent/5 flex items-center justify-center ring-4 ring-white/10"
+          style={{ width: "240px", height: "240px" }}
+        >
           {profile?.profileImage ? (
             <Image
-              src={urlFor(profile.profileImage).width(256).height(256).url()}
+              src={urlFor(profile.profileImage).width(500).height(500).url()}
               alt={profile.fullName || "Profile Picture"}
               fill
               className="object-cover"
               priority
             />
           ) : (
-            <User className="w-16 h-16 text-muted-foreground" />
+            <User className="w-20 h-20 text-muted-foreground" />
           )}
         </div>
         {home?.availabilityStatus && (
@@ -81,11 +84,13 @@ export default async function Home() {
         </div>
       </section>
       
+      {profile?.bio && (
       <section className="py-10">
         <GlassCard className="p-8 prose prose-neutral dark:prose-invert max-w-none w-full">
-          { profile?.bio && <PortableText value={profile.bio} /> }
-        </GlassCard>
-      </section>
+            <PortableText value={profile.bio} /> 
+          </GlassCard>
+        </section>
+      )}
 
       {/* Experience Section */}
       <section className="space-y-8">
@@ -94,7 +99,7 @@ export default async function Home() {
            {profile?.resumeURL && (
               <a href={profile.resumeURL} target="_blank" rel="noopener noreferrer">
                 <GlassButton size="sm" className="gap-2" variant="ghost">
-                  <FileText size={16} /> Download PDF
+                  <FileText size={16} /> Download Resume
                 </GlassButton>
               </a>
             )}
