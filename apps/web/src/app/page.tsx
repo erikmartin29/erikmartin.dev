@@ -103,11 +103,19 @@ export default async function Home() {
         <div className="grid gap-6">
           {experience && experience.length > 0 ? (
             experience.map((job) => {
-              const startYear = job.startDate
-                ? new Date(job.startDate).getFullYear()
+              const startDate = job.startDate
+                ? new Date(job.startDate).toLocaleDateString("en-US", {
+                    month: "short",
+                    year: "numeric",
+                    timeZone: "UTC",
+                  })
                 : undefined;
-              const endYear = job.endDate
-                ? new Date(job.endDate).getFullYear()
+              const endDate = job.endDate
+                ? new Date(job.endDate).toLocaleDateString("en-US", {
+                    month: "short",
+                    year: "numeric",
+                    timeZone: "UTC",
+                  })
                 : "Present";
 
               return (
@@ -118,7 +126,7 @@ export default async function Home() {
                     <p className="text-accent">{job.company}</p>
                   </div>
                   <span className="text-sm text-muted-foreground bg-white/5 px-3 py-1 rounded-full mt-2 md:mt-0 w-fit">
-                    {startYear ?? "Unknown"} - {endYear}
+                    {startDate ?? "Unknown"} - {endDate}
                   </span>
                 </div>
                 <div className="text-muted-foreground">
@@ -137,7 +145,7 @@ export default async function Home() {
                       <p className="text-accent">Tech Company Inc.</p>
                     </div>
                     <span className="text-sm text-muted-foreground bg-white/5 px-3 py-1 rounded-full mt-2 md:mt-0 w-fit">
-                      2021 - Present
+                      Jan 2021 - Present
                     </span>
                   </div>
                   <p className="text-muted-foreground">
