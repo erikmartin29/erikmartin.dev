@@ -11,7 +11,7 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
       <div
         ref={ref}
         className={cn(
-          "glass-panel rounded-2xl border border-white/20 p-4  transition-all duration-300",
+          "glass-panel rounded-2xl border border-white/20 p-4 md:p-6 transition-all duration-300",
           variant === "hover" && "hover:bg-white/10 hover:scale-[1.02] hover:shadow-lg cursor-pointer",
           className
         )}
