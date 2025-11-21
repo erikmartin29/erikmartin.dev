@@ -5,7 +5,7 @@ import { sanityFetch } from "@/sanity/live";
 import { HOME_QUERY } from "@/sanity/queries";
 import type { HOME_QUERYResult } from "@/sanity/sanity.types";
 import { PortableText } from "@portabletext/react";
-import { ArrowRight, FileText, Github, Linkedin, Mail, User } from "lucide-react";
+import { ArrowRight, FileText, Github, Linkedin, Mail, MapPin } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { urlFor } from "@/sanity/client";
@@ -19,24 +19,22 @@ export default async function Home() {
   console.log("Profile Data:", JSON.stringify(profile, null, 2));
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-6 md:gap-10">
       <section className="flex flex-col items-center text-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-        <div 
-          className="relative mb-4 overflow-hidden rounded-full shadow-lg shadow-accent/5 flex items-center justify-center ring-4 ring-white/10"
-          style={{ width: "240px", height: "240px" }}
-        >
-          {profile?.profileImage ? (
+        {profile?.profileImage && (
+          <div 
+            className="relative overflow-hidden rounded-full shadow-lg w-48 h-48 md:w-60 md:h-60"
+          >
             <Image
               src={urlFor(profile.profileImage).width(500).height(500).url()}
-              alt={profile.fullName || "Profile Picture"}
+              alt={profile?.fullName || "Profile Picture"}
               fill
               className="object-cover"
               priority
             />
-          ) : (
-            <User className="w-20 h-20 text-muted-foreground" />
-          )}
-        </div>
+          </div>
+        )}
+        
         {home?.availabilityStatus && (
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel text-sm font-medium text-accent mb-4">
             <span className="relative flex h-2 w-2">
@@ -47,7 +45,7 @@ export default async function Home() {
           </div>
         )}
         
-        <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
+        <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight">
           {home?.heroHeading}
         </h1>
         
@@ -86,19 +84,18 @@ export default async function Home() {
       
       {profile?.bio && (
       <section className="py-10">
-        <GlassCard className="p-8 prose prose-neutral dark:prose-invert max-w-none w-full">
+      <GlassCard className="p-6 md:p-8 prose prose-neutral dark:prose-invert max-w-none w-full">
             <PortableText value={profile.bio} /> 
           </GlassCard>
         </section>
       )}
 
-      {/* Experience Section */}
       <section className="space-y-8">
         <div className="flex items-center justify-between">
            <SectionHeading title="Experience" align="left" className="mb-0" />
            {profile?.resumeURL && (
               <a href={profile.resumeURL} target="_blank" rel="noopener noreferrer">
-                <GlassButton size="sm" className="gap-2" variant="ghost">
+                <GlassButton size="sm" className="gap-2" variant="primary">
                   <FileText size={16} /> Download Resume
                 </GlassButton>
               </a>
@@ -124,15 +121,23 @@ export default async function Home() {
                 : "Present";
 
               return (
-              <GlassCard key={job._id} className="p-6">
-                <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
+              <GlassCard key={job._id}>
+                <div className="flex justify-between mb-4">
                   <div>
                     <h3 className="text-xl font-bold">{job.jobTitle}</h3>
                     <p className="text-accent">{job.company}</p>
                   </div>
-                  <span className="text-sm text-muted-foreground bg-white/5 px-3 py-1 rounded-full mt-2 md:mt-0 w-fit">
-                    {startDate ?? "Unknown"} - {endDate}
-                  </span>
+                  <div className="flex flex-col items-end gap-1 mt-2">
+                    <span className="text-sm text-muted-foreground bg-white/5 px-3 py-1 rounded-full w-fit">
+                      {startDate ?? "Unknown"} - {endDate}
+                    </span>
+                    {job.location && (
+                      <span className="flex items-center gap-1 text-sm text-muted-foreground/80 px-2">
+                        <MapPin size={12} />
+                        {job.location}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div className="text-muted-foreground">
                   {job.description && <PortableText value={job.description} />}
@@ -143,7 +148,7 @@ export default async function Home() {
           ) : (
              // Fallback experience content so the page isn't empty before CMS data is added
              <>
-                <GlassCard className="p-6">
+                <GlassCard>
                   <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
                     <div>
                       <h3 className="text-xl font-bold">Senior Frontend Engineer</h3>

@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Erik Martin | Creative Developer",
-  description: "Portfolio and blog of Erik Martin, a creative developer focused on minimal, high-performance web experiences.",
+  title: "Erik Martin",
+  description: "Portfolio and blog of Erik Martin, a full-stack developer and designer.",
 };
 
 export default function RootLayout({
