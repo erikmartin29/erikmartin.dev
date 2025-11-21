@@ -8,26 +8,6 @@ interface GlassButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   asChild?: boolean;
 }
 
-// Mini-circuit pattern for the button background
-const ButtonCircuit = () => (
-  <svg 
-    className="absolute inset-0 w-full h-full opacity-30 pointer-events-none mix-blend-overlay" 
-    viewBox="0 0 100 40" 
-    preserveAspectRatio="none"
-  >
-    <path 
-      d="M0 20 L10 20 L15 10 L25 10 L30 20 L100 20 M20 10 L20 0 M80 20 L80 40" 
-      stroke="currentColor" 
-      strokeWidth="0.5" 
-      fill="none" 
-    />
-    <circle cx="15" cy="10" r="1.5" fill="currentColor" />
-    <circle cx="25" cy="10" r="1.5" fill="currentColor" />
-    <circle cx="80" cy="30" r="1.5" fill="currentColor" />
-    <rect x="40" y="15" width="20" height="10" stroke="currentColor" strokeWidth="0.5" fill="none" opacity="0.5" />
-  </svg>
-);
-
 export const GlassButton = forwardRef<HTMLButtonElement, GlassButtonProps>(
   ({ className, variant = "primary", size = "md", asChild = false, children, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
@@ -68,12 +48,6 @@ export const GlassButton = forwardRef<HTMLButtonElement, GlassButtonProps>(
         )}
         {...props}
       >
-        {/* Circuitry Overlay (Only for primary/secondary to keep ghost clean) */}
-        {variant !== "ghost" && (
-          <div className="absolute inset-0 -z-10 opacity-50">
-             <ButtonCircuit />
-          </div>
-        )}
         
         {/* Glossy Shine Overlay */}
         {variant !== "ghost" && (

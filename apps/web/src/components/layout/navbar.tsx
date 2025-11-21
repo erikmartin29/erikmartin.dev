@@ -31,9 +31,8 @@ export function Navbar() {
         <Link 
           href="/" 
           className="pointer-events-auto flex items-center justify-center px-6 h-[60px] rounded-full hover:scale-[1.02] transition-all"
-          style={{ boxShadow: "0 8px 30px rgba(0, 0, 0, 0.06)" }}
         >
-          <span className="text-lg font-bold tracking-tight">
+          <span className="text-3xl font-bold tracking-tight">
             Erik Martin<span className="text-accent">.</span>
           </span>
         </Link>

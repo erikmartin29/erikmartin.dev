@@ -59,7 +59,7 @@ export default async function ContactPage() {
             </div>
           </div>
         </GlassCard>
-      </div>s
+      </div>
     </div>
   );
 }
