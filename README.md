@@ -17,7 +17,7 @@ Monorepo for my personal portfolio/blog!
 ## 🚀 Development
 ### Prerequisites
 
-- Node v25.1.0
+- Node v25.1.0 (run `nvm use` to use, or `nvm install` to install)
 
 ### Setup
 
