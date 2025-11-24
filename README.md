@@ -23,7 +23,7 @@ Monorepo for my personal portfolio/blog!
 ### Setup
 
 ```bash
-git clone git@github.com:erikmartin29/erikmartin.dev.git
+git clone https://github.com/erikmartin29/erikmartin.dev.git
 cd erikmartin.dev
 pnpm install
 pnpm run dev
