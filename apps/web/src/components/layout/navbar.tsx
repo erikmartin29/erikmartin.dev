@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { Briefcase, NotebookPen, Mail, Home } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { ModeToggle } from "@/components/mode-toggle";
 
 const NAV_LINKS = [
   { href: "/", label: "Home", icon: Home },

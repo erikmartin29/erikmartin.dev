@@ -9,14 +9,6 @@ type SanityFetchArgs<QueryResponse> = {
   params?: QueryParams;
 };
 
-/**
- * Simple Sanity fetch helper that always bypasses the Next.js cache.
- *
- * This is optimized for hosting environments like AWS Amplify that don't
- * support on-demand ISR APIs such as `revalidateTag`. Every request goes
- * directly to Sanity, so content changes in Studio are reflected on both
- * localhost and the deployed site without any extra revalidation wiring.
- */
 export async function sanityFetch<QueryResponse>({
   query,
   params = {},
@@ -28,10 +20,6 @@ export async function sanityFetch<QueryResponse>({
   return { data };
 }
 
-/**
- * Live preview wiring for Sanity Studio drafts.
- * This keeps the existing `<SanityLive />` component in your layout working.
- */
 export const { SanityLive } = defineLive({
   client,
 });

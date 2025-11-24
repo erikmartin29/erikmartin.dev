@@ -7,6 +7,7 @@ import { sanityFetch } from "@/sanity/live";
 import { PROJECTS_QUERY } from "@/sanity/queries";
 import type { PROJECTS_QUERYResult } from "@/sanity/sanity.types";
 import { urlFor } from "@/sanity/client";
+import Image from "next/image";
 
 export const metadata = {
   title: "Projects | Erik Martin",
@@ -43,9 +44,10 @@ export default async function ProjectsPage() {
           <GlassCard key={project._id} className="flex flex-col h-full" variant="hover">
             <div className="h-48 w-full bg-accent/5 rounded-xl mb-6 border border-white/10 flex items-center justify-center text-muted-foreground overflow-hidden relative group">
               {project.image ? (
-                 <img 
+                 <Image 
                    src={urlFor(project.image).width(800).height(400).url()} 
                    alt={project.title ?? "Project image"} 
+                   fill
                    className="absolute inset-0 w-full h-full object-cover"
                  />
               ) : (

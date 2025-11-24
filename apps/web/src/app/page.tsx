@@ -45,11 +45,11 @@ export default async function Home() {
           </div>
         )}
         
-        <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight">
+        <h1 className="px-4 text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight whitespace-nowrap">
           {home?.heroHeading}
         </h1>
         
-        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
+        <p className="px-4 text-sm sm:text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed whitespace-nowrap">
           {home?.heroSubheading}
         </p>
         

@@ -20,12 +20,8 @@ export const GlassButton = forwardRef<HTMLButtonElement, GlassButtonProps>(
           
           // Variants
           variant === "primary" && [
-            // Base Glass/Plastic
-            "bg-accent/80 text-white backdrop-blur-sm",
-            // Borders & Highlights for 3D effect
-            "border-t border-white/40 border-b border-black/20",
+            "bg-accent/80 text-white backdrop-blur-sm border-white/20",
             "shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_4px_8px_rgba(0,149,168,0.3)]",
-            // Hover State
             "hover:bg-accent hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_6px_12px_rgba(0,149,168,0.4)] hover:-translate-y-0.5",
           ],
           

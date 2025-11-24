@@ -63,13 +63,13 @@ export default async function BlogPage() {
                   {post.title}
                 </h2>
                 
-                <p className="text-muted-foreground line-clamp-2 text-sm md:text-base">
+                <p className="text-muted-foreground line-clamp-1 text-sm md:text-base">
                   {post.excerpt}
                 </p>
 
-                <div className="flex flex-col gap-2 text-xs text-muted-foreground mt-auto pt-2 items-start">
+                <div className="flex flex-col gap-2 text-xs text-muted-foreground mt-auto items-start">
                   {post.publishedAt && (
-                    <span className="flex items-center gap-1.5">
+                    <span className="flex items-center">
                       <Calendar size={14}  />
                       <p className="text-muted-foreground line-clamp-2 text-sm px-2">
                       {new Date(post.publishedAt).toLocaleDateString(undefined, {
