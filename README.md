@@ -1,24 +1,23 @@
-# erikmartin.dev
+# [erikmartin.dev](https://erikmartin.dev/)
 
 Monorepo for my personal portfolio/blog!
 
-🌐 **Live Site:** [erikmartin.dev](https://erikmartin.dev/)
+## About
 
-## 📁 Structure
-
-- `apps/web` - Next.js frontend application
-- `apps/sanity` - Sanity Studio application + schemas
+- `apps/web` - Next.js frontend
+- `apps/sanity` - Sanity Studio + schema definitions
 
 ### Content Management
-- Sanity.io - Headless CMS for blog posts and portfolio content
+* All content is hosted & edited with [Sanity](https://www.sanity.io).
 
-### Deployment
-- AWS Amplify - Hosting + continuous deployment
+## Deployment
+* AWS Amplify deploys and hosts the frontend
+* Sanity hosts the studio and manages content
 
 ## 🚀 Development
 ### Prerequisites
 
-- Node.js v25.1.0
+- Node v25.1.0
 
 ### Setup
 
