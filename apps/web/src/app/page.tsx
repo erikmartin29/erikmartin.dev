@@ -1,6 +1,7 @@
 import { GlassButton } from "@/components/ui/glass-button";
 import { GlassCard } from "@/components/ui/glass-card";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { SkillCard } from "@/components/skill-card";
 import { sanityFetch } from "@/sanity/live";
 import { HOME_QUERY } from "@/sanity/queries";
 import type { HOME_QUERYResult } from "@/sanity/sanity.types";
@@ -14,9 +15,7 @@ export default async function Home() {
   const { data } = await sanityFetch<HOME_QUERYResult>({
     query: HOME_QUERY,
   });
-  const { home, profile, experience } = data;
-  
-  console.log("Profile Data:", JSON.stringify(profile, null, 2));
+  const { home, profile, experience, skills } = data;
 
   return (
     <div className="flex flex-col gap-6 md:gap-10">
@@ -164,6 +163,22 @@ export default async function Home() {
                   </p>
                 </GlassCard>
              </>
+          )}
+        </div>
+      </section>
+
+      <section className="space-y-6">
+        <SectionHeading title="Skills" align="left" />
+        
+        <div className="flex flex-wrap gap-3">
+          {skills && skills.length > 0 ? (
+            skills.map((skill) => (
+              <SkillCard key={skill._id} skill={skill} />
+            ))
+          ) : (
+            <p className="text-muted-foreground w-full text-center py-8">
+              No skills added yet. Add skills in the CMS.
+            </p>
           )}
         </div>
       </section>

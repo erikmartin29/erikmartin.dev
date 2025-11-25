@@ -5,6 +5,7 @@ import {postType} from './post'
 import {categoryType} from './category'
 import {experienceType} from './experience'
 import {homeType} from './home'
+import {skillType} from './skill'
 
 export const schemaTypes = [
   testType,
@@ -14,4 +15,5 @@ export const schemaTypes = [
   categoryType,
   experienceType,
   homeType,
+  skillType,
 ]

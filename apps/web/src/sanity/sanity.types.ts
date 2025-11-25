@@ -13,6 +13,57 @@
  */
 
 // Source: schema.json
+export type Skill = {
+  _id: string;
+  _type: "skill";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  logoLight?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  logoDark?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  link?: string;
+  order?: number;
+};
+
+export type SanityImageCrop = {
+  _type: "sanity.imageCrop";
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+};
+
+export type SanityImageHotspot = {
+  _type: "sanity.imageHotspot";
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
+};
+
 export type Home = {
   _id: string;
   _type: "home";
@@ -66,22 +117,6 @@ export type Experience = {
     _key: string;
   }>;
   technologies?: Array<string>;
-};
-
-export type SanityImageCrop = {
-  _type: "sanity.imageCrop";
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
-};
-
-export type SanityImageHotspot = {
-  _type: "sanity.imageHotspot";
-  x?: number;
-  y?: number;
-  height?: number;
-  width?: number;
 };
 
 export type Category = {
@@ -337,11 +372,11 @@ export type Geopoint = {
   alt?: number;
 };
 
-export type AllSanitySchemaTypes = Home | Experience | SanityImageCrop | SanityImageHotspot | Category | Post | Slug | Project | Profile | Test | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
+export type AllSanitySchemaTypes = Skill | SanityImageCrop | SanityImageHotspot | Home | Experience | Category | Post | Slug | Project | Profile | Test | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ../web/src/sanity/queries.ts
 // Variable: HOME_QUERY
-// Query: {  "home": *[_type == "home"][0],  "profile": *[_type == "profile"][0] {    ...,    "resumeURL": resume.asset->url  },  "experience": *[_type == "experience"] | order(startDate desc),  "featuredProjects": *[_type == "project"][0...3] {    _id,    title,    description,    slug,    tags,    link,    github  },  "recentPosts": *[_type == "post"] | order(publishedAt desc)[0...3] {    _id,    title,    slug,    excerpt,    publishedAt,    "categories": categories[]->title  }}
+// Query: {  "home": *[_type == "home"][0],  "profile": *[_type == "profile"][0] {    ...,    "resumeURL": resume.asset->url  },  "experience": *[_type == "experience"] | order(startDate desc),  "skills": *[_type == "skill"] | order(order asc) {    _id,    name,    logoLight,    logoDark,    link,    order  },  "featuredProjects": *[_type == "project"][0...3] {    _id,    title,    description,    slug,    tags,    link,    github  },  "recentPosts": *[_type == "post"] | order(publishedAt desc)[0...3] {    _id,    title,    slug,    excerpt,    publishedAt,    "categories": categories[]->title  }}
 export type HOME_QUERYResult = {
   home: {
     _id: string;
@@ -452,6 +487,36 @@ export type HOME_QUERYResult = {
       _key: string;
     }>;
     technologies?: Array<string>;
+  }>;
+  skills: Array<{
+    _id: string;
+    name: string | null;
+    logoLight: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+    logoDark: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+    link: string | null;
+    order: number | null;
   }>;
   featuredProjects: Array<{
     _id: string;
@@ -673,7 +738,7 @@ export type FOOTER_QUERYResult = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "{\n  \"home\": *[_type == \"home\"][0],\n  \"profile\": *[_type == \"profile\"][0] {\n    ...,\n    \"resumeURL\": resume.asset->url\n  },\n  \"experience\": *[_type == \"experience\"] | order(startDate desc),\n  \"featuredProjects\": *[_type == \"project\"][0...3] {\n    _id,\n    title,\n    description,\n    slug,\n    tags,\n    link,\n    github\n  },\n  \"recentPosts\": *[_type == \"post\"] | order(publishedAt desc)[0...3] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    publishedAt,\n    \"categories\": categories[]->title\n  }\n}": HOME_QUERYResult;
+    "{\n  \"home\": *[_type == \"home\"][0],\n  \"profile\": *[_type == \"profile\"][0] {\n    ...,\n    \"resumeURL\": resume.asset->url\n  },\n  \"experience\": *[_type == \"experience\"] | order(startDate desc),\n  \"skills\": *[_type == \"skill\"] | order(order asc) {\n    _id,\n    name,\n    logoLight,\n    logoDark,\n    link,\n    order\n  },\n  \"featuredProjects\": *[_type == \"project\"][0...3] {\n    _id,\n    title,\n    description,\n    slug,\n    tags,\n    link,\n    github\n  },\n  \"recentPosts\": *[_type == \"post\"] | order(publishedAt desc)[0...3] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    publishedAt,\n    \"categories\": categories[]->title\n  }\n}": HOME_QUERYResult;
     "{\n  \"profile\": *[_type == \"profile\"][0] {\n    ...,\n    \"resumeURL\": resume.asset->url\n  },\n  \"experience\": *[_type == \"experience\"] | order(startDate desc)\n}": ABOUT_QUERYResult;
     "*[_type == \"project\"] | order(_createdAt desc) {\n  _id,\n  title,\n  description,\n  slug,\n  tags,\n  link,\n  github,\n  image\n}": PROJECTS_QUERYResult;
     "*[_type == \"post\"] | order(publishedAt desc) {\n  _id,\n  title,\n  slug,\n  excerpt,\n  publishedAt,\n  \"categories\": categories[]->title,\n  mainImage\n}": BLOG_QUERYResult;

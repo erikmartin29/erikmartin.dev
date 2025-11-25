@@ -7,6 +7,14 @@ export const HOME_QUERY = defineQuery(`{
     "resumeURL": resume.asset->url
   },
   "experience": *[_type == "experience"] | order(startDate desc),
+  "skills": *[_type == "skill"] | order(order asc) {
+    _id,
+    name,
+    logoLight,
+    logoDark,
+    link,
+    order
+  },
   "featuredProjects": *[_type == "project"][0...3] {
     _id,
     title,
