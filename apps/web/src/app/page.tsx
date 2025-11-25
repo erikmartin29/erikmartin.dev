@@ -19,7 +19,7 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col gap-6 md:gap-10">
-      <section className="flex flex-col items-center text-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+      <section className="flex flex-col items-center text-center gap-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
         {profile?.profileImage && (
           <div 
             className="relative overflow-hidden rounded-full shadow-lg w-48 h-48 md:w-60 md:h-60"
@@ -44,39 +44,45 @@ export default async function Home() {
           </div>
         )}
         
-        <h1 className="px-4 text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight whitespace-nowrap">
-          {home?.heroHeading}
-        </h1>
+        <div>
+          <h1 
+            className="px-4 font-bold tracking-tight whitespace-nowrap"
+            style={{ fontSize: 'clamp(4.5rem, 5vw, 4.5rem)' }}
+          >
+            {home?.heroHeading}
+          </h1>
+          
+          <p 
+            className="px-4 py-2 text-muted-foreground max-w-2xl leading-relaxed whitespace-nowrap"
+            style={{ fontSize: 'clamp(1.07rem, 2vw, 1.25rem)' }}
+          >
+            {home?.heroSubheading}
+          </p>
+        </div>
         
-        <p className="px-4 text-sm sm:text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed whitespace-nowrap">
-          {home?.heroSubheading}
-        </p>
-        
-        <div className="flex flex-col items-center gap-6">
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <Link href="/projects">
-              <GlassButton className="gap-2">
-                View Projects <ArrowRight size={18} />
-              </GlassButton>
-            </Link>
-            
-            <div className="flex items-center gap-2 px-4">
-               {profile?.socialLinks?.github && (
-                  <a href={profile.socialLinks.github} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-accent transition-colors p-2" aria-label="GitHub">
-                    <Github size={24} strokeWidth={1.5}/>
-                  </a>
-                )}
-                {profile?.socialLinks?.linkedin && (
-                   <a href={profile.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-accent transition-colors p-2" aria-label="LinkedIn">
-                    <Linkedin size={24} strokeWidth={1.5}/>
-                  </a>
-                )}
-                {profile?.email && (
-                  <a href={`mailto:${profile.email}`} className="text-muted-foreground hover:text-accent transition-colors p-2" aria-label="Email">
-                    <Mail size={24} strokeWidth={1.5} />
-                  </a>
-                )}
-            </div>
+        <div className="flex flex-wrap items-center justify-center pt-5">
+          <Link href="/projects">
+            <GlassButton className="gap-2">
+              View Projects <ArrowRight size={18} />
+            </GlassButton>
+          </Link>
+          
+          <div className="flex items-center gap-2 px-4">
+             {profile?.socialLinks?.github && (
+                <a href={profile.socialLinks.github} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-accent transition-colors p-2" aria-label="GitHub">
+                  <Github size={24} strokeWidth={1.5}/>
+                </a>
+              )}
+              {profile?.socialLinks?.linkedin && (
+                 <a href={profile.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-accent transition-colors p-2" aria-label="LinkedIn">
+                  <Linkedin size={24} strokeWidth={1.5}/>
+                </a>
+              )}
+              {profile?.email && (
+                <a href={`mailto:${profile.email}`} className="text-muted-foreground hover:text-accent transition-colors p-2" aria-label="Email">
+                  <Mail size={24} strokeWidth={1.5} />
+                </a>
+              )}
           </div>
         </div>
       </section>
@@ -89,7 +95,7 @@ export default async function Home() {
         </section>
       )}
 
-      <section className="space-y-8">
+      <section className="space-y-8 pt-5 mx-5">
         <div className="flex items-center justify-between">
            <SectionHeading title="Experience" align="left" className="mb-0" />
            {profile?.resumeURL && (
@@ -101,7 +107,7 @@ export default async function Home() {
             )}
         </div>
         
-        <div className="grid gap-6">
+        <div className="flex flex-col gap-6">
           {experience && experience.length > 0 ? (
             experience.map((job) => {
               const startDate = job.startDate
@@ -121,21 +127,23 @@ export default async function Home() {
 
               return (
               <GlassCard key={job._id}>
-                <div className="flex justify-between mb-4">
-                  <div>
-                    <h3 className="text-xl font-bold">{job.jobTitle}</h3>
-                    <p className="text-accent">{job.company}</p>
-                  </div>
-                  <div className="flex flex-col items-end gap-1 mt-2">
-                    <span className="text-sm text-muted-foreground bg-white/5 px-3 py-1 rounded-full w-fit">
-                      {startDate ?? "Unknown"} - {endDate}
-                    </span>
-                    {job.location && (
-                      <span className="flex items-center gap-1 text-sm text-muted-foreground/80 px-2">
-                        <MapPin size={12} />
-                        {job.location}
+                <div className="flex flex-col gap-3 mb-4">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                    <div>
+                      <h3 className="text-xl font-bold">{job.jobTitle}</h3>
+                      <p className="text-accent">{job.company}</p>
+                    </div>
+                    <div className="flex flex-col items-start sm:items-end gap-1">
+                      <span className="text-xs sm:text-sm text-muted-foreground bg-white/5 px-2 sm:px-3 py-1 rounded-full w-fit whitespace-nowrap">
+                        {startDate ?? "Unknown"} - {endDate}
                       </span>
-                    )}
+                      {job.location && (
+                        <span className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground/80">
+                          <MapPin size={12} />
+                          {job.location}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div className="text-muted-foreground">
@@ -148,14 +156,16 @@ export default async function Home() {
              // Fallback experience content so the page isn't empty before CMS data is added
              <>
                 <GlassCard>
-                  <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
-                    <div>
-                      <h3 className="text-xl font-bold">Senior Frontend Engineer</h3>
-                      <p className="text-accent">Tech Company Inc.</p>
+                  <div className="flex flex-col gap-3 mb-4">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                      <div>
+                        <h3 className="text-xl font-bold">Senior Frontend Engineer</h3>
+                        <p className="text-accent">Tech Company Inc.</p>
+                      </div>
+                      <span className="text-xs sm:text-sm text-muted-foreground bg-white/5 px-2 sm:px-3 py-1 rounded-full w-fit whitespace-nowrap">
+                        Jan 2021 - Present
+                      </span>
                     </div>
-                    <span className="text-sm text-muted-foreground bg-white/5 px-3 py-1 rounded-full mt-2 md:mt-0 w-fit">
-                      Jan 2021 - Present
-                    </span>
                   </div>
                   <p className="text-muted-foreground">
                     Leading the frontend architecture for the core product. Implemented a new design system 
@@ -167,8 +177,8 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="space-y-6">
-        <SectionHeading title="Skills" align="left" />
+      <section className="space-y-6 mx-5">
+        <SectionHeading title="Skills" align="left" className="mb-5" />
         
         <div className="flex flex-wrap gap-3">
           {skills && skills.length > 0 ? (

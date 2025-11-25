@@ -23,18 +23,19 @@ export function SkillCard({ skill }: SkillCardProps) {
   const logo = mounted && resolvedTheme === "dark" ? skill.logoDark : skill.logoLight;
 
   const CardContent = (
-    <GlassCard className="p-3 hover:scale-110 transition-transform duration-200 cursor-pointer flex items-center justify-center">
+    <GlassCard className="p-4 hover:scale-110 transition-transform duration-200 cursor-pointer flex items-center justify-center w-20 h-20 shrink-0">
       {logo ? (
-        <div className="relative w-12 h-12">
+        <div className="relative w-12 h-12 shrink-0">
           <Image
             src={urlFor(logo).width(100).height(100).url()}
             alt={skill.name || "Skill Logo"}
-            width={96}
-            height={96}
+            width={48}
+            height={48}
+            className="w-full h-full object-contain"
           />
         </div>
       ) : (
-        <div className="w-12 h-12 flex items-center justify-center text-2xl font-bold text-muted-foreground">
+        <div className="w-12 h-12 flex items-center justify-center text-2xl font-bold text-muted-foreground shrink-0">
           ?
         </div>
       )}
@@ -42,11 +43,11 @@ export function SkillCard({ skill }: SkillCardProps) {
   );
 
   return skill.link ? (
-    <a href={skill.link} target="_blank" rel="noopener noreferrer">
+    <a href={skill.link} target="_blank" rel="noopener noreferrer" className="shrink-0">
       {CardContent}
     </a>
   ) : (
-    <div>{CardContent}</div>
+    <div className="shrink-0">{CardContent}</div>
   );
 }
 
