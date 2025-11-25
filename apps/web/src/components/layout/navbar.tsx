@@ -28,11 +28,11 @@ export function Navbar() {
       className="fixed top-0 left-0 right-0 z-50 p-4 md:p-6 pointer-events-none" 
       style={{ backgroundColor: "var(--background)" }}
     >
-      <div className="max-w-5xl mx-auto flex items-center justify-between">
+      <div className="max-w-5xl mx-auto flex items-center justify-center md:justify-between">
         {/* Full Name Logo - Left */}
         <Link 
           href="/" 
-          className="pointer-events-auto flex items-center justify-center px-6 h-[60px] rounded-full hover:scale-[1.02] transition-all"
+          className="hidden md:flex pointer-events-auto items-center justify-center px-6 h-[60px] rounded-full hover:scale-[1.02] transition-all"
         >
           <span className="text-3xl font-bold tracking-tight">
             Erik Martin<span className="text-accent">.</span>

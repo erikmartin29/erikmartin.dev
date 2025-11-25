@@ -46,21 +46,21 @@ export default async function Home() {
         
         <div>
           <h1 
-            className="px-4 font-bold tracking-tight whitespace-nowrap"
-            style={{ fontSize: 'clamp(4.5rem, 5vw, 4.5rem)' }}
+            className="m-1 px-4 font-bold tracking-tight whitespace-nowrap"
+            style={{ fontSize: 'clamp(3.5rem, 5vw, 4.5rem)' }}
           >
             {home?.heroHeading}
           </h1>
           
           <p 
-            className="px-4 py-2 text-muted-foreground max-w-2xl leading-relaxed whitespace-nowrap"
-            style={{ fontSize: 'clamp(1.07rem, 2vw, 1.25rem)' }}
+            className="m-1 px-4 py-2 text-muted-foreground max-w-2xl leading-relaxed line-clamp-4 md:line-clamp-none md:whitespace-nowrap"
+            style={{ fontSize: 'clamp(0.9rem, 2vw, 1.25rem)' }}
           >
             {home?.heroSubheading}
           </p>
         </div>
         
-        <div className="flex flex-wrap items-center justify-center pt-5">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-0 pt-2 md:pt-5">
           <Link href="/projects">
             <GlassButton className="gap-2">
               View Projects <ArrowRight size={18} />
@@ -95,13 +95,13 @@ export default async function Home() {
         </section>
       )}
 
-      <section className="space-y-8 pt-5 mx-5">
+      <section className="space-y-8 pt-5 mx-2">
         <div className="flex items-center justify-between">
            <SectionHeading title="Experience" align="left" className="mb-0" />
            {profile?.resumeURL && (
               <a href={profile.resumeURL} target="_blank" rel="noopener noreferrer">
                 <GlassButton size="sm" className="gap-2" variant="primary">
-                  <FileText size={16} /> Download Resume
+                  <FileText size={16} /> <span className="hidden md:inline">Download Resume</span>
                 </GlassButton>
               </a>
             )}
@@ -177,7 +177,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="space-y-6 mx-5">
+      <section className="space-y-6 mx-2">
         <SectionHeading title="Skills" align="left" className="mb-5" />
         
         <div className="flex flex-wrap gap-3">
