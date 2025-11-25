@@ -24,7 +24,10 @@ export function Navbar() {
   const pillX = hasActive ? activeIndex * (TAB_WIDTH + GAP) : 0;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 p-4 md:p-6 pointer-events-none">
+    <header 
+      className="fixed top-0 left-0 right-0 z-50 p-4 md:p-6 pointer-events-none" 
+      style={{ backgroundColor: "var(--background)" }}
+    >
       <div className="max-w-5xl mx-auto flex items-center justify-between">
         {/* Full Name Logo - Left */}
         <Link 
