@@ -19,19 +19,6 @@ export default async function ProjectsPage() {
     query: PROJECTS_QUERY,
   });
 
-  // Fallback data if no projects in CMS yet
-  const displayProjects = projects && projects.length > 0 ? projects : [
-    {
-      _id: "1",
-      title: "E-Commerce Dashboard",
-      description: "A comprehensive analytics dashboard for online retailers, featuring real-time data visualization and inventory management.",
-      tags: ["Next.js", "TypeScript", "Tailwind CSS", "Recharts"],
-      link: "#",
-      github: "#",
-      image: null
-    },
-  ];
-
   return (
     <div className="space-y-12">
       <SectionHeading 
@@ -40,7 +27,7 @@ export default async function ProjectsPage() {
       />
 
       <div className="grid md:grid-cols-2 gap-8">
-        {displayProjects.map((project) => (
+        {projects.map((project) => (
           <GlassCard key={project._id} className="flex flex-col h-full" variant="hover">
             <div className="h-48 w-full bg-accent/5 rounded-xl mb-6 border border-white/10 flex items-center justify-center text-muted-foreground overflow-hidden relative group">
               {project.image ? (
@@ -81,7 +68,7 @@ export default async function ProjectsPage() {
               {project.github && (
                 <Link href={project.github} className="flex-1" target="_blank">
                   <GlassButton variant="primary" className="w-full gap-2" size="sm">
-                    Code <Github size={16} />
+                    Github <Github size={16} />
                   </GlassButton>
                 </Link>
               )}
