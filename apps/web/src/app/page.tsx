@@ -2,6 +2,7 @@ import { GlassButton } from "@/components/ui/glass-button";
 import { GlassCard } from "@/components/ui/glass-card";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { SkillCard } from "@/components/skill-card";
+import { CommitGraph } from "@/components/github-contribution-graph";
 import { sanityFetch } from "@/sanity/live";
 import { HOME_QUERY } from "@/sanity/queries";
 import type { HOME_QUERYResult } from "@/sanity/sanity.types";
@@ -192,6 +193,13 @@ export default async function Home() {
           )}
         </div>
       </section>
+
+      {profile?.socialLinks?.github && (
+        <section className="space-y-6 mx-2">
+          <SectionHeading title="GitHub Activity" align="left" className="mb-5" />
+          <CommitGraph githubUrl={profile.socialLinks.github} />
+        </section>
+      )}
     </div>
   );
 }
