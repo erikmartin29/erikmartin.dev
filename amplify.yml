@@ -19,3 +19,6 @@ applications:
       cache:
         paths:
           - node_modules/**/*
+      environment:
+        variables:
+          GITHUB_TOKEN: $GITHUB_TOKEN
