@@ -10,6 +10,7 @@ applications:
             - pnpm install
         build:
           commands:
+            - env | grep -e GITHUB_TOKEN >> apps/web/.env.production
             - pnpm build
       artifacts:
         baseDirectory: apps/web/.next
@@ -18,6 +19,3 @@ applications:
       cache:
         paths:
           - node_modules/**/*
-      environment:
-        variables:
-          GITHUB_TOKEN: $GITHUB_TOKEN
