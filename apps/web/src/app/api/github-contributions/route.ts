@@ -46,11 +46,12 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // calculate date range for the last 365 days
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const oneYearAgo = new Date(today);
-    oneYearAgo.setDate(oneYearAgo.getDate() - 364);
+    // calculate the start date to 1 year ago, then anchored to the closest Sunday
+    const startDate = new Date(today);
+    startDate.setDate(startDate.getDate() - 364 - today.getDay());
     
     const query = `
       query($username: String!, $from: DateTime!, $to: DateTime!) {
@@ -72,7 +73,7 @@ export async function GET(request: NextRequest) {
 
     const variables = {
       username,
-      from: oneYearAgo.toISOString(),
+      from: startDate.toISOString(),
       to: today.toISOString(),
     };
 
@@ -122,10 +123,10 @@ export async function GET(request: NextRequest) {
       });
     });
 
-    // generate all dates in the range and map contributions
+    // generate all dates in the range starting from Sunday and map contributions
     const allDates: ContributionData[] = [];
     for (
-      let d = new Date(oneYearAgo);
+      let d = new Date(startDate);
       d <= today;
       d.setDate(d.getDate() + 1)
     ) {

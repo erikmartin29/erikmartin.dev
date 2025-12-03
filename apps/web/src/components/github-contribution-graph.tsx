@@ -89,15 +89,12 @@ export function CommitGraph({ githubUrl }: CommitGraphProps) {
     };
   };
 
+  // group contributions into weeks (API always starts from Sunday)
   const weeks: CommitData[][] = [];
-  const daysPerWeek = 7;
-  const totalWeeks = Math.ceil(contributions.length / daysPerWeek);
-  
-  for (let weekIndex = 0; weekIndex < totalWeeks; weekIndex++) {
-    const weekStart = weekIndex * daysPerWeek;
-    const weekEnd = Math.min(weekStart + daysPerWeek, contributions.length);
-    weeks.push(contributions.slice(weekStart, weekEnd));
+  for (let i = 0; i < contributions.length; i += 7) {
+    weeks.push(contributions.slice(i, i + 7));
   }
+  const totalWeeks = weeks.length;
 
   // calculate cell size based on card width
   useEffect(() => {
