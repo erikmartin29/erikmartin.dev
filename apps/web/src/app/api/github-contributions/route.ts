@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
   const githubToken = process.env.GITHUB_TOKEN;
 
   if (!githubToken) {
-    console.warn("GITHUB_TOKEN environment variable not set. Using mock data.");
+    console.error("GITHUB_TOKEN environment variable not set.");
     return NextResponse.json(
       { error: "GitHub token not configured" },
       { status: 503 }
