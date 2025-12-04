@@ -23,6 +23,7 @@
   
   /* Accent Colors */
   --accent: #0095a8; 
+  --accent-base: #0095a8; /* To use for folders */
   --accent-foreground: #f5f5f5;
   
   /* Glass Effect Variables */
