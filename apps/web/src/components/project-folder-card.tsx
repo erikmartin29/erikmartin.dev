@@ -6,7 +6,7 @@ import Link from "next/link"
 import { ExternalLink, Github } from "lucide-react"
 import { GlassButton } from "@/components/ui/glass-button"
 import { cn } from "@/lib/utils"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 
 interface ProjectFolderCardProps {
   title: string
@@ -17,6 +17,8 @@ interface ProjectFolderCardProps {
   imageUrls?: string[]
   isVisible?: boolean
 }
+
+type AnimationState = "closed" | "hover" | "open"
 
 export function ProjectFolderCard({
   title,
@@ -30,13 +32,31 @@ export function ProjectFolderCard({
   const [isOpen, setIsOpen] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [animationState, setAnimationState] = useState<AnimationState>("closed")
 
+  const leaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Close if the card becomes invisible
   useEffect(() => {
-    if (!isVisible && isOpen) {
-      const timer = setTimeout(() => setIsOpen(false), 0)
-      return () => clearTimeout(timer)
+    if (!isVisible) {
+      setIsOpen(false)
+      setIsHovered(false)
+      setAnimationState("closed")
+      if (leaveTimeoutRef.current) {
+        clearTimeout(leaveTimeoutRef.current)
+        leaveTimeoutRef.current = null
+      }
     }
-  }, [isVisible, isOpen])
+  }, [isVisible])
+
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (leaveTimeoutRef.current) {
+        clearTimeout(leaveTimeoutRef.current)
+      }
+    }
+  }, [])
 
   const imagesToDisplay = imageUrls
   const totalImages = imagesToDisplay.length
@@ -48,6 +68,65 @@ export function ProjectFolderCard({
     }
   }
 
+  const handleMouseEnter = () => {
+    if (!isVisible) return
+
+    setIsHovered(true)
+
+    if (leaveTimeoutRef.current) {
+      clearTimeout(leaveTimeoutRef.current)
+      leaveTimeoutRef.current = null
+    }
+
+    if (isOpen) {
+      setAnimationState("open")
+    } else {
+      setAnimationState("hover")
+    }
+  }
+
+  const handleMouseLeave = () => {
+    setIsHovered(false)
+
+    if (leaveTimeoutRef.current) {
+      clearTimeout(leaveTimeoutRef.current)
+      leaveTimeoutRef.current = null
+    }
+
+    // only do hover -> closed transition if we were open
+    if (animationState === "open") {
+      setAnimationState("hover")
+
+      leaveTimeoutRef.current = setTimeout(() => {
+        setIsOpen(false)
+        setAnimationState("closed")
+      }, 300)
+    } else {
+      // for plain hover, close immediately with no delay
+      setIsOpen(false)
+      setAnimationState("closed")
+    }
+  }
+
+  const handleClick = () => {
+    if (!isVisible) return
+
+    if (leaveTimeoutRef.current) {
+      clearTimeout(leaveTimeoutRef.current)
+      leaveTimeoutRef.current = null
+    }
+
+    if (isOpen) {
+      // closing by click, mirror hover state
+      setIsOpen(false)
+      setAnimationState(isHovered ? "hover" : "closed")
+    } else {
+      // opening
+      setIsOpen(true)
+      setAnimationState("open")
+    }
+  }
+
   return (
     <motion.div
       className={cn(
@@ -55,15 +134,11 @@ export function ProjectFolderCard({
         isVisible ? "cursor-pointer" : "cursor-default pointer-events-none"
       )}
       initial="closed"
-      animate={isOpen ? "open" : isHovered && isVisible ? "hover" : "closed"}
-      onMouseEnter={() => isVisible && setIsHovered(true)}
-      onMouseLeave={() => {
-        setIsHovered(false)
-        setIsOpen(false)
-      }}
-      onClick={() => isVisible && setIsOpen(!isOpen)}
+      animate={animationState}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onClick={handleClick}
     >
-
       <motion.svg
         className="absolute inset-x-0 bottom-0 w-full h-[350px] z-0"
         viewBox="0 0 100 100"
@@ -74,7 +149,7 @@ export function ProjectFolderCard({
           open: {
             y: 0,
             opacity: 0,
-            transition: { 
+            transition: {
               rotateX: { duration: 0.25, ease: "easeInOut" },
               y: { duration: 0.25, ease: "easeInOut" },
               opacity: { duration: 0.05, ease: "easeOut" },
@@ -84,17 +159,15 @@ export function ProjectFolderCard({
       >
         <path
           d="M0,16 0,4 Q0, 0 4,0 L30,0 L36,4 L96,4 Q100,4 100,10 L100,96 Q100,100 96,100 L4,100 Q0,100 0,96 Z"
-          className="fill-[var(--accent)] dark:fill-zinc-900 stroke-white/10 border border-white/10"
+          className="fill-[var(--accent)] stroke-white/10 border border-white/10"
           strokeWidth="0"
           vectorEffect="non-scaling-stroke"
         />
       </motion.svg>
 
-      {/* Images */}
       {imagesToDisplay.length > 0 ? (
         <>
           {imagesToDisplay.map((url, index) => {
-            // diff is the order in the stack, with 0 being the frontmost image
             const diff = (index - currentImageIndex + totalImages) % totalImages
 
             return (
@@ -113,24 +186,23 @@ export function ProjectFolderCard({
                 }}
                 variants={{
                   closed: {
-                      x: 0,
-                      scale: diff < 3 ? 1 - diff * 0.02 : 0.9,
-                      rotate: 0,
-                      opacity: 0,
-                      transition: { duration: 0.15 },
+                    x: 0,
+                    scale: diff < 3 ? 1 - diff * 0.02 : 0.9,
+                    rotate: 0,
+                    opacity: 0,
+                    transition: { duration: 0.15 },
                   },
                   hover: {
-                      y: diff < 3 ? -60 - diff * 15 : -60,
-                      x: 0,
-                      scale: 1,
-                      rotate:
-                        diff < 3 ? (diff % 2 === 0 ? -1 : 1) * diff : 0,
-                      opacity: diff < 3 ? 1 : 0,
-                      transition: {
-                        duration: 0.3,
-                        ease: "easeOut",
-                        delay: diff * 0.05,
-                      },
+                    y: diff < 3 ? -60 - diff * 15 : -60,
+                    x: 0,
+                    scale: 1,
+                    rotate: diff < 3 ? (diff % 2 === 0 ? -1 : 1) * diff : 0,
+                    opacity: diff < 3 ? 1 : 0,
+                    transition: {
+                      duration: 0.3,
+                      ease: "easeOut",
+                      delay: diff * 0.05,
+                    },
                   },
                   open: () => {
                     if (diff === 0) {
@@ -213,42 +285,41 @@ export function ProjectFolderCard({
         </motion.div>
       )}
 
-      {/* Front flap, always in front of images */}
       <motion.div
-          className="absolute inset-x-0 bottom-0 h-[320px] z-30 origin-bottom"
-          variants={{
-            closed: { rotateX: 0, y: 0, opacity: 1 },
-            hover: {
-              rotateX: -15,
-              y: -2,
-              opacity: 1,
-              transition: { 
-                rotateX: { duration: 0.25, ease: "easeInOut" },
-                y: { duration: 0.25, ease: "easeInOut" },
-                opacity: { duration: 0.15, ease: "easeOut" },
-              },
+        className="absolute inset-x-0 bottom-0 h-[320px] z-30 origin-bottom"
+        variants={{
+          closed: { rotateX: 0, y: 0, opacity: 1 },
+          hover: {
+            rotateX: -15,
+            y: -2,
+            opacity: 1,
+            transition: {
+              rotateX: { duration: 0.25, ease: "easeInOut" },
+              y: { duration: 0.25, ease: "easeInOut" },
+              opacity: { duration: 0.15, ease: "easeOut" },
             },
-            open: {
-              rotateX: -30,
-              y: 0,
-              opacity: 0,
-              transition: { 
-                rotateX: { duration: 0.25, ease: "easeInOut" },
-                y: { duration: 0.25, ease: "easeInOut" },
-                opacity: { duration: 0.15, ease: "easeOut" },
-              },
+          },
+          open: {
+            rotateX: -30,
+            y: 0,
+            opacity: 0,
+            transition: {
+              rotateX: { duration: 0.25, ease: "easeInOut" },
+              y: { duration: 0.25, ease: "easeInOut" },
+              opacity: { duration: 0.15, ease: "easeOut" },
             },
-          }}
-          style={{
-            transformStyle: "preserve-3d",
-            pointerEvents: isOpen ? "none" : "auto"
-          }}
+          },
+        }}
+        style={{
+          transformStyle: "preserve-3d",
+          pointerEvents: isOpen ? "none" : "auto",
+        }}
       >
         <div
           className={cn(
             "w-full h-full rounded-2xl p-6 flex flex-col",
             "shadow-[0_-5px_30px_rgba(0,0,0,0.3)]",
-            "bg-accent dark:bg-zinc-900"
+            "bg-accent"
           )}
         >
           <h3 className="text-xl font-bold mb-2 text-white line-clamp-1">
@@ -273,36 +344,36 @@ export function ProjectFolderCard({
           )}
 
           {(link || github) && (
-          <div className="flex items-center gap-3 mt-auto">
-            {link && (
-              <Link
-                href={link}
-                className="flex-1"
-                target="_blank"
-                onClick={e => e.stopPropagation()}
-              >
-                <GlassButton className="w-full gap-2 h-9 text-xs" size="sm">
-                  Live <ExternalLink size={14} />
-                </GlassButton>
-              </Link>
-            )}
-            {github && (
-              <Link
-                href={github}
-                className="flex-1"
-                target="_blank"
-                onClick={e => e.stopPropagation()}
-              >
-                <GlassButton
-                  variant="primary"
-                  className="w-full gap-2 h-9 text-xs"
-                  size="sm"
+            <div className="flex items-center gap-3 mt-auto">
+              {link && (
+                <Link
+                  href={link}
+                  className="flex-1"
+                  target="_blank"
+                  onClick={e => e.stopPropagation()}
                 >
-                  Code <Github size={14} />
-                </GlassButton>
-              </Link>
-            )}
-          </div>
+                  <GlassButton className="w-full gap-2 h-9 text-xs" size="sm">
+                    Live <ExternalLink size={14} />
+                  </GlassButton>
+                </Link>
+              )}
+              {github && (
+                <Link
+                  href={github}
+                  className="flex-1"
+                  target="_blank"
+                  onClick={e => e.stopPropagation()}
+                >
+                  <GlassButton
+                    variant="secondary"
+                    className="w-full gap-2 h-9 text-xs text-white"
+                    size="sm"
+                  >
+                    Code <Github size={14} />
+                  </GlassButton>
+                </Link>
+              )}
+            </div>
           )}
         </div>
       </motion.div>
