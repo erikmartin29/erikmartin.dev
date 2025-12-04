@@ -1,12 +1,12 @@
 "use client"
 
+import { useState, useEffect, useRef, useCallback, type MouseEvent } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
 import { ExternalLink, Github } from "lucide-react"
 import { GlassButton } from "@/components/ui/glass-button"
 import { cn } from "@/lib/utils"
-import { useState, useEffect, useRef } from "react"
 
 interface ProjectFolderCardProps {
   title: string
@@ -20,6 +20,127 @@ interface ProjectFolderCardProps {
 
 type AnimationState = "closed" | "hover" | "open"
 
+const svgVariants = {
+  closed: {
+    y: 0,
+    opacity: 1,
+    transition: { opacity: { duration: 0.15, ease: "easeInOut" } },
+  },
+  hover: { y: 0, opacity: 1 },
+  open: {
+    y: 0,
+    opacity: 0,
+    transition: {
+      rotateX: { duration: 0.25, ease: "easeInOut" },
+      y: { duration: 0.25, ease: "easeInOut" },
+      opacity: { duration: 0.05, ease: "easeOut" },
+    },
+  },
+}
+
+const noPreviewVariants = {
+  closed: { y: 0, scale: 0.98, rotate: 0, opacity: 0.9 },
+  hover: {
+    y: -60,
+    scale: 1,
+    rotate: -1,
+    opacity: 1,
+    transition: { duration: 0.25, ease: "easeOut" },
+  },
+  open: { y: -150, scale: 1, rotate: 0, opacity: 1 },
+}
+
+const cardFrontVariants = {
+  closed: { rotateX: 0, y: 0, opacity: 1 },
+  hover: {
+    rotateX: -15,
+    y: -2,
+    opacity: 1,
+    transition: {
+      rotateX: { duration: 0.25, ease: "easeInOut" },
+      y: { duration: 0.25, ease: "easeInOut" },
+      opacity: { duration: 0.15, ease: "easeOut" },
+    },
+  },
+  open: {
+    rotateX: -30,
+    y: 0,
+    opacity: 0,
+    transition: {
+      rotateX: { duration: 0.25, ease: "easeInOut" },
+      y: { duration: 0.25, ease: "easeInOut" },
+      opacity: { duration: 0.15, ease: "easeOut" },
+    },
+  },
+}
+
+const imageVariants = {
+  closed: (diff: number) => ({
+    x: 0,
+    scale: diff < 3 ? 1 - diff * 0.02 : 0.9,
+    rotate: 0,
+    opacity: 0,
+    transition: { duration: 0.12, ease: "easeOut" },
+  }),
+  hover: (diff: number) => ({
+    y: diff < 3 ? -60 - diff * 15 : -60,
+    x: 0,
+    scale: 1,
+    rotate: diff < 3 ? (diff % 2 === 0 ? -1 : 1) * diff : 0,
+    opacity: diff < 3 ? 1 : 0,
+    transition: {
+      duration: 0.22,
+      ease: "easeOut",
+      delay: diff * 0.04,
+    },
+  }),
+  open: (diff: number) => {
+    if (diff === 0) {
+      return {
+        x: 0,
+        scale: 1.05,
+        opacity: 1,
+        rotate: 0,
+        transition: {
+          duration: 0.2,
+          ease: "easeOut",
+        },
+      }
+    } else if (diff === 1) {
+      return {
+        x: 16,
+        scale: 1.02,
+        opacity: 1,
+        rotate: 2,
+        transition: {
+          duration: 0.2,
+          ease: "easeOut",
+        },
+      }
+    } else if (diff === 2) {
+      return {
+        x: 28,
+        scale: 1,
+        opacity: 1,
+        rotate: 4,
+        transition: {
+          duration: 0.2,
+          ease: "easeOut",
+        },
+      }
+    } else {
+      return {
+        y: -220,
+        x: 0,
+        scale: 0.9,
+        opacity: 0,
+        rotate: 0,
+        transition: { duration: 0.16, ease: "easeIn" },
+      }
+    }
+  },
+}
+
 export function ProjectFolderCard({
   title,
   description,
@@ -30,14 +151,17 @@ export function ProjectFolderCard({
   isVisible = true,
 }: ProjectFolderCardProps) {
   const [animationState, setAnimationState] = useState<AnimationState>("closed")
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   const leaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const lastClickRef = useRef(0)
 
   const isOpen = animationState === "open"
-  const isHovered =
-    animationState === "hover" || animationState === "open"
 
-  // Close if the card becomes invisible
+  const imagesToDisplay = imageUrls
+  const totalImages = imagesToDisplay.length
+
+  // Reset when card is hidden
   useEffect(() => {
     if (!isVisible) {
       setAnimationState("closed")
@@ -48,7 +172,7 @@ export function ProjectFolderCard({
     }
   }, [isVisible])
 
-  // Clean up timeout on unmount
+  // Clean up timeout
   useEffect(() => {
     return () => {
       if (leaveTimeoutRef.current) {
@@ -57,19 +181,17 @@ export function ProjectFolderCard({
     }
   }, [])
 
-  const imagesToDisplay = imageUrls
-  const totalImages = imagesToDisplay.length
+  const nextImage = useCallback(
+    (e: MouseEvent) => {
+      e.stopPropagation()
+      if (totalImages > 0) {
+        setCurrentImageIndex(prev => (prev + 1) % totalImages)
+      }
+    },
+    [totalImages]
+  )
 
-  const nextImage = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    if (totalImages > 0) {
-      setCurrentImageIndex(prev => (prev + 1) % totalImages)
-    }
-  }
-
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-
-  const handleMouseEnter = () => {
+  const handleMouseEnter = useCallback(() => {
     if (!isVisible) return
 
     if (leaveTimeoutRef.current) {
@@ -80,10 +202,9 @@ export function ProjectFolderCard({
     if (animationState === "closed") {
       setAnimationState("hover")
     }
-    // if already open, stay open
-  }
+  }, [animationState, isVisible])
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     if (leaveTimeoutRef.current) {
       clearTimeout(leaveTimeoutRef.current)
       leaveTimeoutRef.current = null
@@ -94,14 +215,21 @@ export function ProjectFolderCard({
 
       leaveTimeoutRef.current = setTimeout(() => {
         setAnimationState("closed")
-      }, 300)
+      }, 280)
     } else {
       setAnimationState("closed")
     }
-  }
+  }, [animationState])
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     if (!isVisible) return
+
+    const now = performance.now()
+    // Simple debounce to avoid stacking animations on Safari
+    if (now - lastClickRef.current < 220) {
+      return
+    }
+    lastClickRef.current = now
 
     if (leaveTimeoutRef.current) {
       clearTimeout(leaveTimeoutRef.current)
@@ -113,7 +241,7 @@ export function ProjectFolderCard({
     } else {
       setAnimationState("open")
     }
-  }
+  }, [animationState, isVisible])
 
   return (
     <motion.div
@@ -121,6 +249,7 @@ export function ProjectFolderCard({
         "relative h-[415px] w-full max-w-md mx-auto isolate perspective-[1000px]",
         isVisible ? "cursor-pointer" : "cursor-default pointer-events-none"
       )}
+      style={{ willChange: "transform" }}
       initial="closed"
       animate={animationState}
       onMouseEnter={handleMouseEnter}
@@ -131,23 +260,7 @@ export function ProjectFolderCard({
         className="absolute inset-x-0 bottom-0 w-full h-[350px] z-0"
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
-        variants={{
-          closed: {
-            y: 0,
-            opacity: 1,
-            transition: { opacity: { duration: 0.15, ease: "easeInOut" } },
-          },
-          hover: { y: 0, opacity: 1 },
-          open: {
-            y: 0,
-            opacity: 0,
-            transition: {
-              rotateX: { duration: 0.25, ease: "easeInOut" },
-              y: { duration: 0.25, ease: "easeInOut" },
-              opacity: { duration: 0.05, ease: "easeOut" },
-            },
-          },
-        }}
+        variants={svgVariants}
       >
         <path
           d="M0,16 0,4 Q0, 0 4,0 L30,0 L36,4 L96,4 Q100,4 100,10 L100,96 Q100,100 96,100 L4,100 Q0,100 0,96 Z"
@@ -163,96 +276,32 @@ export function ProjectFolderCard({
             const diff =
               (index - currentImageIndex + totalImages) % totalImages
 
+            // Only render top 3 for performance
+            if (diff > 2) return null
+
             return (
               <motion.div
                 key={`${url}-${index}`}
-                className="absolute inset-x-6 bottom-4 h-[300px] overflow-hidden origin-bottom"
+                className="absolute inset-x-6 bottom-4 h-[300px] overflow-hidden origin-bottom rounded-lg shadow-sm"
                 style={{
                   zIndex: 20 - diff,
-                  boxShadow: "0 0 3px 1px rgba(0, 0, 0, 0.025)",
-                  borderRadius: "8px",
+                  willChange: "transform",
                 }}
                 onClick={e => {
                   if (isOpen) {
                     nextImage(e)
                   }
                 }}
-                variants={{
-                  closed: {
-                    x: 0,
-                    scale: diff < 3 ? 1 - diff * 0.02 : 0.9,
-                    rotate: 0,
-                    opacity: 0,
-                    transition: { duration: 0.15 },
-                  },
-                  hover: {
-                    y: diff < 3 ? -60 - diff * 15 : -60,
-                    x: 0,
-                    scale: 1,
-                    rotate:
-                      diff < 3 ? (diff % 2 === 0 ? -1 : 1) * diff : 0,
-                    opacity: diff < 3 ? 1 : 0,
-                    transition: {
-                      duration: 0.3,
-                      ease: "easeOut",
-                      delay: diff * 0.05,
-                    },
-                  },
-                  open: () => {
-                    if (diff === 0) {
-                      return {
-                        x: 0,
-                        scale: 1.1,
-                        opacity: 1,
-                        rotate: 0,
-                        transition: {
-                          type: "spring",
-                          stiffness: 300,
-                          damping: 30,
-                        },
-                      }
-                    } else if (diff === 1) {
-                      return {
-                        x: 20,
-                        scale: 1.05,
-                        opacity: 1,
-                        rotate: 3,
-                        transition: {
-                          type: "spring",
-                          stiffness: 300,
-                          damping: 30,
-                        },
-                      }
-                    } else if (diff === 2) {
-                      return {
-                        x: 40,
-                        scale: 1,
-                        opacity: 1,
-                        rotate: 6,
-                        transition: {
-                          type: "spring",
-                          stiffness: 300,
-                          damping: 30,
-                        },
-                      }
-                    } else {
-                      return {
-                        y: -250,
-                        x: 0,
-                        scale: 0.9,
-                        opacity: 0,
-                        rotate: 0,
-                        transition: { duration: 0.2 },
-                      }
-                    }
-                  },
-                }}
+                variants={imageVariants}
+                custom={diff}
               >
                 <Image
                   src={url}
                   alt={`${title} screenshot ${index + 1}`}
                   fill
                   className="object-cover"
+                  loading={index === currentImageIndex ? "eager" : "lazy"}
+                  sizes="(max-width: 768px) 90vw, 400px"
                 />
               </motion.div>
             )
@@ -261,17 +310,8 @@ export function ProjectFolderCard({
       ) : (
         <motion.div
           className="absolute inset-x-6 bottom-12 h-[300px] z-20 rounded-xl overflow-hidden shadow-lg origin-bottom"
-          variants={{
-            closed: { y: 0, scale: 0.98, rotate: 0, opacity: 0.9 },
-            hover: {
-              y: -60,
-              scale: 1,
-              rotate: -1,
-              opacity: 1,
-              transition: { duration: 0.4, ease: "easeOut" },
-            },
-            open: { y: -150, scale: 1, rotate: 0, opacity: 1 },
-          }}
+          variants={noPreviewVariants}
+          style={{ willChange: "transform" }}
         >
           <div className="w-full h-full flex items-center justify-center bg-accent/5 text-muted-foreground text-sm">
             No Preview
@@ -281,33 +321,12 @@ export function ProjectFolderCard({
 
       <motion.div
         className="absolute inset-x-0 bottom-0 h-[320px] z-30 origin-bottom"
-        variants={{
-          closed: { rotateX: 0, y: 0, opacity: 1 },
-          hover: {
-            rotateX: -15,
-            y: -2,
-            opacity: 1,
-            transition: {
-              rotateX: { duration: 0.25, ease: "easeInOut" },
-              y: { duration: 0.25, ease: "easeInOut" },
-              opacity: { duration: 0.15, ease: "easeOut" },
-            },
-          },
-          open: {
-            rotateX: -30,
-            y: 0,
-            opacity: 0,
-            transition: {
-              rotateX: { duration: 0.25, ease: "easeInOut" },
-              y: { duration: 0.25, ease: "easeInOut" },
-              opacity: { duration: 0.15, ease: "easeOut" },
-            },
-          },
-        }}
+        variants={cardFrontVariants}
         style={{
           transformStyle: "preserve-3d",
           pointerEvents: isOpen ? "none" : "auto",
-          display: animationState === "open" ? "none" : "block",
+          display: isOpen ? "none" : "block",
+          willChange: "transform",
         }}
       >
         <div
