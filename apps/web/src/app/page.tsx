@@ -19,8 +19,9 @@ export default async function Home() {
   const { home, profile, experience, skills } = data;
 
   return (
-    <div className="flex flex-col gap-6 md:gap-10">
+    <div className="flex flex-col gap-6">
       <section className="flex flex-col items-center text-center gap-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+        {/* Profile Image */}
         {profile?.profileImage && (
           <div 
             className="relative overflow-hidden rounded-full shadow-lg w-48 h-48 md:w-60 md:h-60"
@@ -35,6 +36,7 @@ export default async function Home() {
           </div>
         )}
         
+        {/* Status */}
         {home?.availabilityStatus && (
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel text-sm font-medium text-accent mb-4">
             <span className="relative flex h-2 w-2">
@@ -45,6 +47,7 @@ export default async function Home() {
           </div>
         )}
         
+        {/* Hero Heading and Subheading */}
         <div>
           <h1 
             className="m-1 px-4 font-bold tracking-tight whitespace-nowrap"
@@ -61,7 +64,8 @@ export default async function Home() {
           </p>
         </div>
         
-        <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-0 pt-2 md:pt-5">
+        {/* Projects and Social Links */}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-0">
           <Link href="/projects">
             <GlassButton className="gap-2">
               View Projects <ArrowRight size={18} />
@@ -88,20 +92,22 @@ export default async function Home() {
         </div>
       </section>
       
+      {/* Bio */}
       {profile?.bio && (
-      <section className="py-10">
-      <GlassCard className="p-6 md:p-8 prose prose-neutral dark:prose-invert max-w-none w-full">
-            <PortableText value={profile.bio} /> 
+        <section className="py-10">
+          <GlassCard className="p-6 md:p-8 prose prose-neutral dark:prose-invert max-w-none w-full">
+                <PortableText value={profile.bio} /> 
           </GlassCard>
         </section>
       )}
 
+      {/* Experience */}
       <section className="space-y-8 pt-5 mx-2">
         <div className="flex items-center justify-between">
            <SectionHeading title="Experience" align="left" className="mb-0" />
            {profile?.resumeURL && (
               <a href={profile.resumeURL} target="_blank" rel="noopener noreferrer">
-                <GlassButton size="sm" className="gap-2" variant="primary">
+                <GlassButton size="sm" className="gap-2" variant="ghost">
                   <FileText size={16} /> <span className="hidden md:inline">Download Resume</span>
                 </GlassButton>
               </a>
@@ -109,7 +115,7 @@ export default async function Home() {
         </div>
         
         <div className="flex flex-col gap-6">
-          {experience && experience.length > 0 ? (
+          { experience?.length > 0 && 
             experience.map((job) => {
               const startDate = job.startDate
                 ? new Date(job.startDate).toLocaleDateString("en-US", {
@@ -127,73 +133,50 @@ export default async function Home() {
                 : "Present";
 
               return (
-              <GlassCard key={job._id}>
-                <div className="flex flex-col gap-3 mb-4">
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-                    <div>
-                      <h3 className="text-xl font-bold">{job.jobTitle}</h3>
-                      <p className="text-accent">{job.company}</p>
-                    </div>
-                    <div className="flex flex-col items-start sm:items-end gap-1">
-                      <span className="text-xs sm:text-sm text-muted-foreground bg-white/5 px-2 sm:px-3 py-1 rounded-full w-fit whitespace-nowrap">
-                        {startDate ?? "Unknown"} - {endDate}
-                      </span>
-                      {job.location && (
-                        <span className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground/80">
-                          <MapPin size={12} />
-                          {job.location}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="text-muted-foreground">
-                  {job.description && <PortableText value={job.description} />}
-                </div>
-              </GlassCard>
-              );
-            })
-          ) : (
-             // Fallback experience content so the page isn't empty before CMS data is added
-             <>
-                <GlassCard>
-                  <div className="flex flex-col gap-3 mb-4">
-                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                <GlassCard key={job._id}>
+                  <div className="flex flex-col gap-3 mb-1">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
                       <div>
-                        <h3 className="text-xl font-bold">Senior Frontend Engineer</h3>
-                        <p className="text-accent">Tech Company Inc.</p>
+                        <h3 className="text-xl font-bold">{job.jobTitle}</h3>
+                        <p className="text-accent">{job.company}</p>
                       </div>
-                      <span className="text-xs sm:text-sm text-muted-foreground bg-white/5 px-2 sm:px-3 py-1 rounded-full w-fit whitespace-nowrap">
-                        Jan 2021 - Present
-                      </span>
+                      <div className="flex flex-col items-start sm:items-end">
+                        <span className="text-sm text-muted-foreground ">
+                          {startDate ?? "Unknown"} - {endDate}
+                        </span>
+                        {job.location && (
+                          <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                            <MapPin size={12} />
+                            {job.location}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  <p className="text-muted-foreground">
-                    Leading the frontend architecture for the core product. Implemented a new design system 
-                    using Tailwind CSS and React, improving development velocity by 40%.
-                  </p>
+                  <div className="text-muted-foreground">
+                    {job.description && <PortableText value={job.description} />}
+                  </div>
                 </GlassCard>
-             </>
+              );
+            }
           )}
         </div>
       </section>
 
-      <section className="space-y-6 mx-2">
-        <SectionHeading title="Skills" align="left" className="mb-5" />
-        
-        <div className="flex flex-wrap gap-3">
-          {skills && skills.length > 0 ? (
-            skills.map((skill) => (
-              <SkillCard key={skill._id} skill={skill} />
-            ))
-          ) : (
-            <p className="text-muted-foreground w-full text-center py-8">
-              No skills added yet. Add skills in the CMS.
-            </p>
-          )}
-        </div>
-      </section>
+      {/* Skills */}
+      {skills?.length > 0 && (
+        <section className="space-y-6 mx-2">
+          <SectionHeading title="Skills" align="left" className="mb-5" />
+          
+          <div className="flex flex-wrap gap-3">
+            { skills.map((skill) => (
+                <SkillCard key={skill._id} skill={skill} />
+            ))}
+          </div>
+        </section>
+      )}
 
+      {/* GitHub Activity */}
       {profile?.socialLinks?.github && (
         <section className="space-y-6 mx-2">
           <SectionHeading title="GitHub Activity" align="left" className="mb-5" />

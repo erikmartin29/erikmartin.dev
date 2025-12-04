@@ -50,7 +50,8 @@ export const PROJECTS_QUERY = defineQuery(`*[_type == "project"] | order(_create
   tags,
   link,
   github,
-  image
+  image,
+  images
 }`);
 
 export const BLOG_QUERY = defineQuery(`*[_type == "post"] | order(publishedAt desc) {

@@ -1,6 +1,7 @@
 import { SectionHeading } from "@/components/ui/section-heading";
 import { GlassCard } from "@/components/ui/glass-card";
-import { Linkedin, Mail } from "lucide-react";
+import { ContactButton } from "@/components/contact-button";
+import { Github, Linkedin, Mail, MapPin, MessageSquare, FileText, Twitter } from "lucide-react";
 import { sanityFetch } from "@/sanity/live";
 import { HOME_QUERY } from "@/sanity/queries";
 import type { HOME_QUERYResult } from "@/sanity/sanity.types";
@@ -16,50 +17,70 @@ export default async function ContactPage() {
   });
   const { profile } = data;
 
+  const email = profile?.email || "hello@erikmartin.dev";
+
   return (
     <div className="space-y-12">
       <SectionHeading 
-        title="Get in Touch" 
-        subtitle="Have a project in mind? Let's build something amazing together."
+        title="Let's Connect"
       />
 
-      <div className="max-w-2xl mx-auto">
-        <GlassCard className="p-8 space-y-8">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent shrink-0">
-              <Mail size={24} />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold mb-1">Email Me</h3>
-              {profile?.email ? (
-                <a href={`mailto:${profile.email}`} className="text-accent hover:underline">
-                  {profile.email}
+      {/* Primary Contact Methods */}
+      <section className="space-y-6">
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {/* Email Card */}
+          <GlassCard className="p-6 hover:bg-white/10 transition-all duration-300">
+            <div className="flex flex-col items-center text-center gap-4">
+              <div className="w-16 h-16 flex items-center justify-center text-accent">
+                <Mail size={28} />
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-semibold text-lg">Email</h4>
+                <a 
+                  href={`mailto:${email}`} 
+                  className="text-accent hover:underline font-medium break-all"
+                >
+                  {email}
                 </a>
-              ) : (
-                <a href="mailto:hello@erikmartin.dev" className="text-accent hover:underline">
-                  hello@erikmartin.dev
-                </a>
-              )}
+              </div>
+              <ContactButton 
+                href={`mailto:${email}`}
+                size="sm" 
+                variant="primary"
+                className="w-full"
+              >
+                Send Email
+              </ContactButton>
             </div>
-          </div>
+          </GlassCard>
 
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent shrink-0">
-              <Linkedin size={24} />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold mb-1">LinkedIn</h3>
-              {profile?.socialLinks?.linkedin ? (
-                 <a href={profile.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
-                   DM me on LinkedIn
-                 </a>
-              ) : (
-                 <span className="text-muted-foreground">LinkedIn link unavailable</span>
-              )}
-            </div>
-          </div>
-        </GlassCard>
-      </div>
+          {/* LinkedIn Card */}
+          {profile?.socialLinks?.linkedin && (
+            <GlassCard className="p-6 hover:bg-white/10 transition-all duration-300">
+              <div className="flex flex-col items-center text-center gap-4">
+                <div className="w-16 h-16 flex items-center justify-center text-accent">
+                  <Linkedin size={28} />
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-lg">LinkedIn</h4>
+                  <p className="text-sm text-muted-foreground/80">Connect with me and shoot me a message!</p>
+                </div>
+                <ContactButton 
+                  href={profile.socialLinks.linkedin}
+                  size="sm" 
+                  variant="primary"
+                  className="w-full"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View Profile
+                </ContactButton>
+              </div>
+            </GlassCard>
+          )}
+        </div>
+      </section>
+
     </div>
   );
 }
