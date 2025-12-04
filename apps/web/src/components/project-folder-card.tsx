@@ -29,18 +29,17 @@ export function ProjectFolderCard({
   imageUrls = [],
   isVisible = true,
 }: ProjectFolderCardProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isHovered, setIsHovered] = useState(false)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [animationState, setAnimationState] = useState<AnimationState>("closed")
 
   const leaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  const isOpen = animationState === "open"
+  const isHovered =
+    animationState === "hover" || animationState === "open"
+
   // Close if the card becomes invisible
   useEffect(() => {
     if (!isVisible) {
-      setIsOpen(false)
-      setIsHovered(false)
       setAnimationState("closed")
       if (leaveTimeoutRef.current) {
         clearTimeout(leaveTimeoutRef.current)
@@ -68,42 +67,35 @@ export function ProjectFolderCard({
     }
   }
 
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+
   const handleMouseEnter = () => {
     if (!isVisible) return
 
-    setIsHovered(true)
-
     if (leaveTimeoutRef.current) {
       clearTimeout(leaveTimeoutRef.current)
       leaveTimeoutRef.current = null
     }
 
-    if (isOpen) {
-      setAnimationState("open")
-    } else {
+    if (animationState === "closed") {
       setAnimationState("hover")
     }
+    // if already open, stay open
   }
 
   const handleMouseLeave = () => {
-    setIsHovered(false)
-
     if (leaveTimeoutRef.current) {
       clearTimeout(leaveTimeoutRef.current)
       leaveTimeoutRef.current = null
     }
 
-    // only do hover -> closed transition if we were open
     if (animationState === "open") {
       setAnimationState("hover")
 
       leaveTimeoutRef.current = setTimeout(() => {
-        setIsOpen(false)
         setAnimationState("closed")
       }, 300)
     } else {
-      // for plain hover, close immediately with no delay
-      setIsOpen(false)
       setAnimationState("closed")
     }
   }
@@ -116,13 +108,9 @@ export function ProjectFolderCard({
       leaveTimeoutRef.current = null
     }
 
-    if (isOpen) {
-      // closing by click, mirror hover state
-      setIsOpen(false)
-      setAnimationState(isHovered ? "hover" : "closed")
+    if (animationState === "open") {
+      setAnimationState("hover")
     } else {
-      // opening
-      setIsOpen(true)
       setAnimationState("open")
     }
   }
@@ -144,7 +132,11 @@ export function ProjectFolderCard({
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
         variants={{
-          closed: { y: 0, opacity: 1, transition: { opacity: { duration: 0.15, ease: "easeInOut" } } },
+          closed: {
+            y: 0,
+            opacity: 1,
+            transition: { opacity: { duration: 0.15, ease: "easeInOut" } },
+          },
           hover: { y: 0, opacity: 1 },
           open: {
             y: 0,
@@ -159,7 +151,7 @@ export function ProjectFolderCard({
       >
         <path
           d="M0,16 0,4 Q0, 0 4,0 L30,0 L36,4 L96,4 Q100,4 100,10 L100,96 Q100,100 96,100 L4,100 Q0,100 0,96 Z"
-          className="fill-[var(--accent)] stroke-white/10 border border-white/10"
+          className="fill-[var(--accent-base)] stroke-white/10 border border-white/10"
           strokeWidth="0"
           vectorEffect="non-scaling-stroke"
         />
@@ -168,19 +160,20 @@ export function ProjectFolderCard({
       {imagesToDisplay.length > 0 ? (
         <>
           {imagesToDisplay.map((url, index) => {
-            const diff = (index - currentImageIndex + totalImages) % totalImages
+            const diff =
+              (index - currentImageIndex + totalImages) % totalImages
 
             return (
               <motion.div
                 key={`${url}-${index}`}
-                className="absolute inset-x-6 bottom-4 h-[300px] rounded-xl overflow-hidden origin-bottom"
+                className="absolute inset-x-6 bottom-4 h-[300px] overflow-hidden origin-bottom"
                 style={{
                   zIndex: 20 - diff,
                   boxShadow: "0 0 3px 1px rgba(0, 0, 0, 0.025)",
+                  borderRadius: "8px",
                 }}
                 onClick={e => {
                   if (isOpen) {
-                    e.stopPropagation()
                     nextImage(e)
                   }
                 }}
@@ -196,7 +189,8 @@ export function ProjectFolderCard({
                     y: diff < 3 ? -60 - diff * 15 : -60,
                     x: 0,
                     scale: 1,
-                    rotate: diff < 3 ? (diff % 2 === 0 ? -1 : 1) * diff : 0,
+                    rotate:
+                      diff < 3 ? (diff % 2 === 0 ? -1 : 1) * diff : 0,
                     opacity: diff < 3 ? 1 : 0,
                     transition: {
                       duration: 0.3,
@@ -313,13 +307,14 @@ export function ProjectFolderCard({
         style={{
           transformStyle: "preserve-3d",
           pointerEvents: isOpen ? "none" : "auto",
+          display: animationState === "open" ? "none" : "block",
         }}
       >
         <div
           className={cn(
             "w-full h-full rounded-2xl p-6 flex flex-col",
             "shadow-[0_-5px_30px_rgba(0,0,0,0.3)]",
-            "bg-accent"
+            "bg-[var(--accent-base)]"
           )}
         >
           <h3 className="text-xl font-bold mb-2 text-white line-clamp-1">
