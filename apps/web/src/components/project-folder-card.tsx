@@ -20,127 +20,6 @@ interface ProjectFolderCardProps {
 
 type AnimationState = "closed" | "hover" | "open"
 
-const svgVariants = {
-  closed: {
-    y: 0,
-    opacity: 1,
-    transition: { opacity: { duration: 0.15, ease: "easeInOut" } },
-  },
-  hover: { y: 0, opacity: 1 },
-  open: {
-    y: 0,
-    opacity: 0,
-    transition: {
-      rotateX: { duration: 0.25, ease: "easeInOut" },
-      y: { duration: 0.25, ease: "easeInOut" },
-      opacity: { duration: 0.05, ease: "easeOut" },
-    },
-  },
-}
-
-const noPreviewVariants = {
-  closed: { y: 0, scale: 0.98, rotate: 0, opacity: 0.9 },
-  hover: {
-    y: -60,
-    scale: 1,
-    rotate: -1,
-    opacity: 1,
-    transition: { duration: 0.25, ease: "easeOut" },
-  },
-  open: { y: -150, scale: 1, rotate: 0, opacity: 1 },
-}
-
-const cardFrontVariants = {
-  closed: { rotateX: 0, y: 0, opacity: 1 },
-  hover: {
-    rotateX: -15,
-    y: -2,
-    opacity: 1,
-    transition: {
-      rotateX: { duration: 0.25, ease: "easeInOut" },
-      y: { duration: 0.25, ease: "easeInOut" },
-      opacity: { duration: 0.15, ease: "easeOut" },
-    },
-  },
-  open: {
-    rotateX: -30,
-    y: 0,
-    opacity: 0,
-    transition: {
-      rotateX: { duration: 0.25, ease: "easeInOut" },
-      y: { duration: 0.25, ease: "easeInOut" },
-      opacity: { duration: 0.15, ease: "easeOut" },
-    },
-  },
-}
-
-const imageVariants = {
-  closed: (diff: number) => ({
-    x: 0,
-    scale: diff < 3 ? 1 - diff * 0.02 : 0.9,
-    rotate: 0,
-    opacity: 0,
-    transition: { duration: 0.12, ease: "easeOut" },
-  }),
-  hover: (diff: number) => ({
-    y: diff < 3 ? -60 - diff * 15 : -60,
-    x: 0,
-    scale: 1,
-    rotate: diff < 3 ? (diff % 2 === 0 ? -1 : 1) * diff : 0,
-    opacity: diff < 3 ? 1 : 0,
-    transition: {
-      duration: 0.22,
-      ease: "easeOut",
-      delay: diff * 0.04,
-    },
-  }),
-  open: (diff: number) => {
-    if (diff === 0) {
-      return {
-        x: 0,
-        scale: 1.05,
-        opacity: 1,
-        rotate: 0,
-        transition: {
-          duration: 0.2,
-          ease: "easeOut",
-        },
-      }
-    } else if (diff === 1) {
-      return {
-        x: 16,
-        scale: 1.02,
-        opacity: 1,
-        rotate: 2,
-        transition: {
-          duration: 0.2,
-          ease: "easeOut",
-        },
-      }
-    } else if (diff === 2) {
-      return {
-        x: 28,
-        scale: 1,
-        opacity: 1,
-        rotate: 4,
-        transition: {
-          duration: 0.2,
-          ease: "easeOut",
-        },
-      }
-    } else {
-      return {
-        y: -220,
-        x: 0,
-        scale: 0.9,
-        opacity: 0,
-        rotate: 0,
-        transition: { duration: 0.16, ease: "easeIn" },
-      }
-    }
-  },
-}
-
 export function ProjectFolderCard({
   title,
   description,
@@ -260,7 +139,23 @@ export function ProjectFolderCard({
         className="absolute inset-x-0 bottom-0 w-full h-[350px] z-0"
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
-        variants={svgVariants}
+        variants={{
+          closed: {
+            y: 0,
+            opacity: 1,
+            transition: { opacity: { duration: 0.15, ease: "easeInOut" } },
+          },
+          hover: { y: 0, opacity: 1 },
+          open: {
+            y: 0,
+            opacity: 0,
+            transition: {
+              rotateX: { duration: 0.25, ease: "easeInOut" },
+              y: { duration: 0.25, ease: "easeInOut" },
+              opacity: { duration: 0.05, ease: "easeOut" },
+            },
+          },
+        }}
       >
         <path
           d="M0,16 0,4 Q0, 0 4,0 L30,0 L36,4 L96,4 Q100,4 100,10 L100,96 Q100,100 96,100 L4,100 Q0,100 0,96 Z"
@@ -292,7 +187,72 @@ export function ProjectFolderCard({
                     nextImage(e)
                   }
                 }}
-                variants={imageVariants}
+                variants={{
+                  closed: (diff: number) => ({
+                    x: 0,
+                    scale: diff < 3 ? 1 - diff * 0.02 : 0.9,
+                    rotate: 0,
+                    opacity: 0,
+                    transition: { duration: 0.12, ease: "easeOut" },
+                  }),
+                  hover: (diff: number) => ({
+                    y: diff < 3 ? -60 - diff * 15 : -60,
+                    x: 0,
+                    scale: 1,
+                    rotate: diff < 3 ? (diff % 2 === 0 ? -1 : 1) * diff : 0,
+                    opacity: diff < 3 ? 1 : 0,
+                    transition: {
+                      duration: 0.22,
+                      ease: "easeOut",
+                      delay: diff * 0.04,
+                    },
+                  }),
+                  open: (diff: number) => {
+                    if (diff === 0) {
+                      return {
+                        x: 0,
+                        scale: 1.05,
+                        opacity: 1,
+                        rotate: 0,
+                        transition: {
+                          duration: 0.2,
+                          ease: "easeOut",
+                        },
+                      }
+                    } else if (diff === 1) {
+                      return {
+                        x: 16,
+                        scale: 1.02,
+                        opacity: 1,
+                        rotate: 2,
+                        transition: {
+                          duration: 0.2,
+                          ease: "easeOut",
+                        },
+                      }
+                    } else if (diff === 2) {
+                      return {
+                        x: 28,
+                        scale: 1,
+                        opacity: 1,
+                        rotate: 4,
+                        transition: {
+                          duration: 0.2,
+                          ease: "easeOut",
+                        },
+                      }
+                    } else {
+                      return {
+                        y: -220,
+                        x: 0,
+                        scale: 0.9,
+                        opacity: 0,
+                        rotate: 0,
+                        transition: { duration: 0.16, ease: "easeIn" },
+                      }
+                    }
+                  },
+                }}
                 custom={diff}
               >
                 <Image
@@ -310,7 +270,17 @@ export function ProjectFolderCard({
       ) : (
         <motion.div
           className="absolute inset-x-6 bottom-12 h-[300px] z-20 rounded-xl overflow-hidden shadow-lg origin-bottom"
-          variants={noPreviewVariants}
+          variants={{
+            closed: { y: 0, scale: 0.98, rotate: 0, opacity: 0.9 },
+            hover: {
+              y: -60,
+              scale: 1,
+              rotate: -1,
+              opacity: 1,
+              transition: { duration: 0.25, ease: "easeOut" },
+            },
+            open: { y: -150, scale: 1, rotate: 0, opacity: 1 },
+          }}
           style={{ willChange: "transform" }}
         >
           <div className="w-full h-full flex items-center justify-center bg-accent/5 text-muted-foreground text-sm">
@@ -321,7 +291,29 @@ export function ProjectFolderCard({
 
       <motion.div
         className="absolute inset-x-0 bottom-0 h-[320px] z-30 origin-bottom"
-        variants={cardFrontVariants}
+        variants={{
+          closed: { rotateX: 0, y: 0, opacity: 1 },
+          hover: {
+            rotateX: -15,
+            y: -2,
+            opacity: 1,
+            transition: {
+              rotateX: { duration: 0.25, ease: "easeInOut" },
+              y: { duration: 0.25, ease: "easeInOut" },
+              opacity: { duration: 0.15, ease: "easeOut" },
+            },
+          },
+          open: {
+            rotateX: -30,
+            y: 0,
+            opacity: 0,
+            transition: {
+              rotateX: { duration: 0.25, ease: "easeInOut" },
+              y: { duration: 0.25, ease: "easeInOut" },
+              opacity: { duration: 0.15, ease: "easeOut" },
+            },
+          },
+        }}
         style={{
           transformStyle: "preserve-3d",
           pointerEvents: isOpen ? "none" : "auto",
