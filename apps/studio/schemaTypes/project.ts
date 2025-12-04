@@ -48,6 +48,12 @@ export const projectType = defineType({
         hotspot: true,
       },
     }),
+    defineField({
+      name: 'images',
+      title: 'Project Gallery',
+      type: 'array',
+      of: [{type: 'image', options: {hotspot: true}}],
+    }),
   ],
 })
 
