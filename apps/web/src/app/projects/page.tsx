@@ -30,7 +30,7 @@ export default async function ProjectsPage() {
             github={project.github || undefined}
             imageUrls={
               ((project as any).images && (project as any).images.length > 0)
-                ? (project as any).images.map((img: any) => urlFor(img).width(600).height(400).url())
+                ? (project as any).images.map((img: any) => urlFor(img).url())
                 : project.image 
                   ? [urlFor(project.image).width(600).height(400).url()] 
                   : []
