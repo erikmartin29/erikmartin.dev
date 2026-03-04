@@ -17,14 +17,14 @@ export function ContentBox({
     <div
       className={cn(
         "w-full border-t border-guideline",
-        showBottomLine && "border-b border-guideline",
+        showBottomLine && "border-b border-guideline -mb-px",
         className
       )}
       {...props}
     >
       <div
         className={cn(
-          "mx-auto px-4 md:px-6 py-[15px]",
+          "w-full mx-auto px-[15px] py-[15px]",
           innerClassName
         )}
         style={{ maxWidth: "var(--max-content-width)" }}

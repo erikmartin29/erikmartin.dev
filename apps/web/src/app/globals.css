@@ -12,7 +12,8 @@
   --color-guideline: var(--guideline);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  
+  --font-serif: var(--font-pt-serif);
+
   /* Custom Utilities for Glass */
   --backdrop-blur-glass: var(--glass-blur);
 }
@@ -37,7 +38,7 @@
   --max-content-width: 880px;
 
   /* Guideline Colors */
-  --guideline: rgba(0, 0, 0, 0.09);
+  --guideline: rgba(216, 216, 216, 0.35);
 
   /* Circuit/Tech Pattern Colors */
   --circuit-line: rgba(0, 0, 0, 0.05);

@@ -1,7 +1,7 @@
 import { SanityLive } from "@/sanity/live";
 import { Navbar } from "@/components/layout/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, PT_Serif } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,6 +12,13 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const ptSerif = PT_Serif({
+  weight: ["400", "700"],
+  variable: "--font-pt-serif",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata = {
@@ -38,11 +45,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen flex flex-col antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${ptSerif.variable} min-h-screen flex flex-col antialiased`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="light"
+          enableSystem={false}
           disableTransitionOnChange
         >
           {/* Full-page vertical guidelines — behind content */}
@@ -54,7 +61,7 @@ export default function RootLayout({
           <div aria-hidden="true" style={{ ...baseLineStyle, left: RIGHT, height: "75px", zIndex: 51 }} />
 
           <Navbar />
-          <main className="flex-1 w-full pt-32 pb-12 relative">
+          <main className="flex-1 w-full pb-12 relative">
             {children}
           </main>
           <SanityLive />
