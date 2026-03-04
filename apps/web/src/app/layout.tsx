@@ -1,6 +1,5 @@
 import { SanityLive } from "@/sanity/live";
 import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -58,7 +57,6 @@ export default function RootLayout({
           <main className="flex-1 w-full pt-32 pb-12 relative">
             {children}
           </main>
-          <Footer />
           <SanityLive />
         </ThemeProvider>
       </body>
