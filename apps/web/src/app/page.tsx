@@ -66,9 +66,9 @@ export default async function Home() {
         
         {/* Projects and Social Links */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-0">
-          <Link href="/projects">
+          <Link href="/work">
             <GlassButton className="gap-2">
-              View Projects <ArrowRight size={18} />
+              View Work <ArrowRight size={18} />
             </GlassButton>
           </Link>
           
