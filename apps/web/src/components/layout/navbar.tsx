@@ -18,10 +18,10 @@ export function Navbar() {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 border-b border-border"
-      style={{ backgroundColor: "var(--background)" }}
+      className="fixed top-0 left-0 right-0 z-50 border-b"
+      style={{ backgroundColor: "var(--background)", borderColor: "var(--guideline)" }}
     >
-      <div className="max-w-5xl mx-auto px-4 md:px-6 flex items-center justify-between h-[60px]">
+      <div className="mx-auto px-4 md:px-6 flex items-center justify-between" style={{ height: '75px', maxWidth: "var(--max-content-width)" }}>
         <nav className="flex items-center gap-6 md:gap-8">
           {NAV_LINKS.map((link) => {
             const isActive =
@@ -35,7 +35,7 @@ export function Navbar() {
                 className={cn(
                   "font-mono text-[13px] tracking-wide transition-colors duration-150",
                   isActive
-                    ? "font-normal text-foreground"
+                    ? "font-medium text-foreground"
                     : "font-light text-muted-foreground hover:text-foreground"
                 )}
               >

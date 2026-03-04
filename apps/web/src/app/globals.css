@@ -9,6 +9,7 @@
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-guideline: var(--guideline);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   
@@ -32,6 +33,12 @@
   --glass-shadow: none;
   --glass-blur: 10px;
   
+  /* Layout */
+  --max-content-width: 880px;
+
+  /* Guideline Colors */
+  --guideline: rgba(0, 0, 0, 0.09);
+
   /* Circuit/Tech Pattern Colors */
   --circuit-line: rgba(0, 0, 0, 0.05);
   --circuit-dot: rgba(0, 0, 0, 0.1);
@@ -52,6 +59,9 @@
   --glass-border: rgba(255, 255, 255, 0.1);
   --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   
+  /* Guideline Colors */
+  --guideline: rgba(255, 255, 255, 0.09);
+
   /* Circuit/Tech Pattern Colors */
   --circuit-line: rgba(255, 255, 255, 0.05);
   --circuit-dot: rgba(255, 255, 255, 0.1);

@@ -20,6 +20,18 @@ export const metadata = {
   description: "Portfolio and blog of Erik Martin, a full-stack developer and designer.",
 };
 
+const GUIDELINE_COLOR = "var(--guideline)";
+const LEFT = "calc(50% - var(--max-content-width) / 2)";
+const RIGHT = "calc(50% + var(--max-content-width) / 2)";
+
+const baseLineStyle: React.CSSProperties = {
+  position: "fixed",
+  top: 0,
+  width: "1px",
+  pointerEvents: "none",
+  backgroundColor: GUIDELINE_COLOR,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -34,8 +46,16 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          {/* Full-page vertical guidelines — behind content */}
+          <div aria-hidden="true" style={{ ...baseLineStyle, left: LEFT, height: "100%", zIndex: 1 }} />
+          <div aria-hidden="true" style={{ ...baseLineStyle, left: RIGHT, height: "100%", zIndex: 1 }} />
+
+          {/* Navbar-height vertical guidelines — above navbar */}
+          <div aria-hidden="true" style={{ ...baseLineStyle, left: LEFT, height: "75px", zIndex: 51 }} />
+          <div aria-hidden="true" style={{ ...baseLineStyle, left: RIGHT, height: "75px", zIndex: 51 }} />
+
           <Navbar />
-          <main className="flex-1 w-full max-w-5xl mx-auto px-4 md:px-6 pt-32 pb-12 relative z-10">
+          <main className="flex-1 w-full pt-32 pb-12 relative">
             {children}
           </main>
           <Footer />
