@@ -123,15 +123,19 @@ export default async function Home() {
                     </p>
                   )}
                   {group.roles.map((role) => {
-                    const startYear = role.startDate
-                      ? new Date(role.startDate).getUTCFullYear()
-                      : null;
-                    const endYear = role.endDate
-                      ? new Date(role.endDate).getUTCFullYear().toString()
-                      : "PRESENT";
-                    const dateStr = startYear
-                      ? `${startYear}-${endYear}`
-                      : endYear;
+                    const isSingleDate =
+                      role.dateDisplayType === "single" && role.singleDate;
+                    const dateStr = isSingleDate
+                      ? new Date(role.singleDate!).getUTCFullYear().toString()
+                      : (() => {
+                          const startYear = role.startDate
+                            ? new Date(role.startDate).getUTCFullYear()
+                            : null;
+                          const endYear = role.endDate
+                            ? new Date(role.endDate).getUTCFullYear().toString()
+                            : "PRESENT";
+                          return startYear ? `${startYear}-${endYear}` : endYear;
+                        })();
 
                     // Monospace dash fill: text area = 415px, Geist Mono 14px ≈ 8.4px/char → 49 chars/line
                     const CHARS_PER_LINE = 49;

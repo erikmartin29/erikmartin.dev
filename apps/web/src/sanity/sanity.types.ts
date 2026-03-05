@@ -103,8 +103,10 @@ export type Experience = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  dateDisplayType?: "range" | "single";
   startDate?: string;
   endDate?: string;
+  singleDate?: string;
   location?: string;
   description?: Array<{
     children?: Array<{
@@ -567,8 +569,10 @@ export type HOME_QUERYResult = {
       crop?: SanityImageCrop;
       _type: "image";
     };
+    dateDisplayType?: "range" | "single";
     startDate?: string;
     endDate?: string;
+    singleDate?: string;
     location?: string;
     description?: Array<{
       children?: Array<{
@@ -740,8 +744,10 @@ export type ABOUT_QUERYResult = {
       crop?: SanityImageCrop;
       _type: "image";
     };
+    dateDisplayType?: "range" | "single";
     startDate?: string;
     endDate?: string;
+    singleDate?: string;
     location?: string;
     description?: Array<{
       children?: Array<{

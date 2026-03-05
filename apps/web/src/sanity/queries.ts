@@ -17,7 +17,7 @@ export const HOME_QUERY = defineQuery(`{
     ...,
     "resumeURL": resume.asset->url
   },
-  "experience": *[_type == "experience"] | order(startDate desc),
+  "experience": *[_type == "experience"] | order(coalesce(startDate, singleDate) desc),
   "skills": *[_type == "skill"] | order(order asc) {
     _id,
     name,

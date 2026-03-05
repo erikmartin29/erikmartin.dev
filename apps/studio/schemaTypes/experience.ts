@@ -30,12 +30,28 @@ export const experienceType = defineType({
       },
     }),
     defineField({
+      name: 'dateDisplayType',
+      title: 'Date Display',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Range (e.g. 2020–2024)', value: 'range' },
+          { title: 'Single year/date', value: 'single' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'range',
+      description:
+        'Range shows start–end dates. Single shows only one date (use Start Date).',
+    }),
+    defineField({
       name: 'startDate',
       title: 'Start Date',
       type: 'date',
       options: {
         dateFormat: 'YYYY-MM',
       },
+      hidden: ({ parent }) => parent?.dateDisplayType === 'single',
     }),
     defineField({
       name: 'endDate',
@@ -45,6 +61,17 @@ export const experienceType = defineType({
         dateFormat: 'YYYY-MM',
       },
       description: 'Leave blank if this is your current position',
+      hidden: ({ parent }) => parent?.dateDisplayType === 'single',
+    }),
+    defineField({
+      name: 'singleDate',
+      title: 'Date',
+      type: 'date',
+      options: {
+        dateFormat: 'YYYY-MM',
+      },
+      description: 'The single year or date to display',
+      hidden: ({ parent }) => parent?.dateDisplayType !== 'single',
     }),
     defineField({
       name: 'location',
