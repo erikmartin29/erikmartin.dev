@@ -641,7 +641,7 @@ export type ABOUT_QUERYResult = {
   }>;
 };
 // Variable: PROJECTS_QUERY
-// Query: *[_type == "project"] | order(_createdAt desc) {  _id,  title,  description,  slug,  tags,  link,  github,  image}
+// Query: *[_type == "project"] | order(_createdAt desc) {  _id,  title,  description,  slug,  tags,  link,  github,  image,  "images": images[]}
 export type PROJECTS_QUERYResult = Array<{
   _id: string;
   title: string | null;
@@ -650,6 +650,7 @@ export type PROJECTS_QUERYResult = Array<{
   tags: Array<string> | null;
   link: string | null;
   github: string | null;
+  color: string | null;
   image: {
     asset?: {
       _ref: string;
@@ -662,6 +663,18 @@ export type PROJECTS_QUERYResult = Array<{
     crop?: SanityImageCrop;
     _type: "image";
   } | null;
+  images: Array<{
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  }> | null;
 }>;
 // Variable: BLOG_QUERY
 // Query: *[_type == "post"] | order(publishedAt desc) {  _id,  title,  slug,  excerpt,  publishedAt,  "categories": categories[]->title,  mainImage}
@@ -686,9 +699,10 @@ export type BLOG_QUERYResult = Array<{
   } | null;
 }>;
 // Variable: POST_QUERY
-// Query: *[_type == "post" && slug.current == $slug][0] {  _id,  title,  slug,  mainImage,  "categories": categories[]->title,  publishedAt,  body}
+// Query: *[_type == "post" && slug.current == $slug][0] {  _id,  _updatedAt,  title,  slug,  mainImage,  "categories": categories[]->title,  publishedAt,  body}
 export type POST_QUERYResult = {
   _id: string;
+  _updatedAt: string;
   title: string | null;
   slug: Slug | null;
   mainImage: {
@@ -740,9 +754,9 @@ declare module "@sanity/client" {
   interface SanityQueries {
     "{\n  \"home\": *[_type == \"home\"][0],\n  \"profile\": *[_type == \"profile\"][0] {\n    ...,\n    \"resumeURL\": resume.asset->url\n  },\n  \"experience\": *[_type == \"experience\"] | order(startDate desc),\n  \"skills\": *[_type == \"skill\"] | order(order asc) {\n    _id,\n    name,\n    logoLight,\n    logoDark,\n    link,\n    order\n  },\n  \"featuredProjects\": *[_type == \"project\"][0...3] {\n    _id,\n    title,\n    description,\n    slug,\n    tags,\n    link,\n    github\n  },\n  \"recentPosts\": *[_type == \"post\"] | order(publishedAt desc)[0...3] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    publishedAt,\n    \"categories\": categories[]->title\n  }\n}": HOME_QUERYResult;
     "{\n  \"profile\": *[_type == \"profile\"][0] {\n    ...,\n    \"resumeURL\": resume.asset->url\n  },\n  \"experience\": *[_type == \"experience\"] | order(startDate desc)\n}": ABOUT_QUERYResult;
-    "*[_type == \"project\"] | order(_createdAt desc) {\n  _id,\n  title,\n  description,\n  slug,\n  tags,\n  link,\n  github,\n  image\n}": PROJECTS_QUERYResult;
+    "*[_type == \"project\"] | order(_createdAt desc) {\n  _id,\n  title,\n  description,\n  slug,\n  tags,\n  link,\n  github,\n  image,\n  \"images\": images[]\n}": PROJECTS_QUERYResult;
     "*[_type == \"post\"] | order(publishedAt desc) {\n  _id,\n  title,\n  slug,\n  excerpt,\n  publishedAt,\n  \"categories\": categories[]->title,\n  mainImage\n}": BLOG_QUERYResult;
-    "*[_type == \"post\" && slug.current == $slug][0] {\n  _id,\n  title,\n  slug,\n  mainImage,\n  \"categories\": categories[]->title,\n  publishedAt,\n  body\n}": POST_QUERYResult;
+    "*[_type == \"post\" && slug.current == $slug][0] {\n  _id,\n  _updatedAt,\n  title,\n  slug,\n  mainImage,\n  \"categories\": categories[]->title,\n  publishedAt,\n  body\n}": POST_QUERYResult;
     "*[_type == \"profile\"][0] {\n  socialLinks\n}": FOOTER_QUERYResult;
   }
 }
