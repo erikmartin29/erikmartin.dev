@@ -9,16 +9,6 @@ function chunk<T>(arr: T[], size: number): T[][] {
   return chunks;
 }
 
-function FullWidthGuideline() {
-  return (
-    <div
-      aria-hidden
-      className="relative left-1/2 w-screen -translate-x-1/2"
-      style={{ height: "1px", backgroundColor: "var(--guideline)" }}
-    />
-  );
-}
-
 interface ProjectGridProps {
   children: ReactNode;
   className?: string;
@@ -31,15 +21,8 @@ export function ProjectGrid({ children, className }: ProjectGridProps) {
   return (
     <div className={cn("flex flex-col", className)}>
       {rows.map((row, rowIndex) => (
-        <div key={rowIndex} className="flex flex-col">
-          <div
-        className="relative left-1/2 w-screen -translate-x-1/2"
-        style={{ height: "1px", backgroundColor: "var(--guideline)" }}
-        aria-hidden
-      />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-8">
-            {row}
-          </div>
+        <div key={rowIndex} className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-5">
+          {row}
         </div>
       ))}
     </div>

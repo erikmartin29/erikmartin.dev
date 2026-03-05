@@ -1,7 +1,18 @@
 import { defineQuery } from "next-sanity";
 
 export const HOME_QUERY = defineQuery(`{
-  "home": *[_type == "home"][0],
+  "home": *[_type == "home"][0] {
+    ...,
+    "featuredProjects": featuredProjects[]-> {
+      _id,
+      title,
+      tagline,
+      year,
+      slug,
+      "thumbnailUrl": thumbnail.asset->url,
+      "videoUrl": thumbnailVideo.asset->url
+    }
+  },
   "profile": *[_type == "profile"][0] {
     ...,
     "resumeURL": resume.asset->url
@@ -14,18 +25,6 @@ export const HOME_QUERY = defineQuery(`{
     logoDark,
     link,
     order
-  },
-  "featuredProjects": *[_type == "project"] | order(order asc, _createdAt desc) [0...3] {
-    _id,
-    title,
-    year,
-    slug,
-    description,
-    tags,
-    link,
-    github,
-    "thumbnailUrl": thumbnail.asset->url,
-    "videoUrl": thumbnailVideo.asset->url
   },
   "recentPosts": *[_type == "post"] | order(publishedAt desc)[0...3] {
     _id,
@@ -40,7 +39,11 @@ export const HOME_QUERY = defineQuery(`{
 export const ABOUT_QUERY = defineQuery(`{
   "profile": *[_type == "profile"][0] {
     ...,
-    "resumeURL": resume.asset->url
+    "resumeURL": resume.asset->url,
+    bio[] {
+      ...,
+      _type == "image" => { ..., asset-> }
+    }
   },
   "experience": *[_type == "experience"] | order(startDate desc)
 }`);

@@ -1,4 +1,4 @@
-import { defineField, defineType } from 'sanity'
+import { defineField, defineType, defineArrayMember } from 'sanity'
 
 export const profileType = defineType({
   name: 'profile',
@@ -28,7 +28,25 @@ export const profileType = defineType({
       name: 'bio',
       title: 'Bio',
       type: 'array',
-      of: [{type: 'block'}]
+      of: [
+        defineArrayMember({ type: 'block' }),
+        defineArrayMember({
+          type: 'image',
+          options: { hotspot: true },
+          fields: [
+            defineField({
+              name: 'caption',
+              title: 'Caption',
+              type: 'string',
+            }),
+            defineField({
+              name: 'alt',
+              title: 'Alt Text',
+              type: 'string',
+            }),
+          ],
+        }),
+      ],
     }),
     defineField({
       name: 'email',

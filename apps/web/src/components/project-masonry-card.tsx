@@ -39,7 +39,7 @@ export function ProjectCard({
   }, []);
 
   return (
-    <Link href={`/work/${slug}`} className="group block">
+    <Link href={`/work/${slug}`} className="group block pb-5">
       <div
         className="relative aspect-4/3 overflow-hidden"
         onMouseEnter={videoUrl ? handleMouseEnter : undefined}
@@ -75,23 +75,17 @@ export function ProjectCard({
         )}
       </div>
 
-      <div
-        className="relative left-1/2 w-screen -translate-x-1/2"
-        style={{ height: "1px", backgroundColor: "var(--guideline)" }}
-        aria-hidden
-      />
-
-      <div className="flex flex-col gap-0.5 mt-2 p-2">
+      <div className="flex flex-col gap-0.5 mt-2 px-2 pb-2">
         <div className="flex items-baseline justify-between gap-4">
           <span className="text-sm font-bold text-foreground">{title}</span>
           {year && (
-            <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground shrink-0">
+            <span className="text-sm font-mono text-muted-foreground/50 uppercase tracking-wider shrink-0">
               {year}
             </span>
           )}
         </div>
         {tagline && (
-          <p className="text-xs text-muted-foreground">{tagline}</p>
+          <p className="text-xs text-muted-foreground/80 font-mono">{tagline}</p>
         )}
       </div>
     </Link>

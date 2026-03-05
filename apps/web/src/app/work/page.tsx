@@ -21,7 +21,7 @@ export default async function WorkPage() {
 
       <ContentBox innerClassName="py-6 px-[15px]">
         <h1
-          className="text-3xl md:text-4xl font-bold tracking-tight mb-8"
+          className="text-3xl md:text-4xl font-bold tracking-tight"
           style={{ fontFamily: "var(--font-pt-serif), Georgia, serif" }}
         >
           Work
