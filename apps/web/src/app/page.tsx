@@ -4,6 +4,7 @@ import { HOME_QUERY } from "@/sanity/queries";
 import type { HOME_QUERYResult } from "@/sanity/sanity.types";
 import { urlFor } from "@/sanity/client";
 import Image from "next/image";
+import { ExternalLink } from "lucide-react";
 
 export default async function Home() {
   const { data } = await sanityFetch<HOME_QUERYResult>({ query: HOME_QUERY });
@@ -12,14 +13,24 @@ export default async function Home() {
   // group consecutive experiences by date and company
   type ExperienceItem = NonNullable<typeof experience>[number];
   const experienceGroups = (experience ?? []).reduce<
-    { company: string; logo: ExperienceItem["logo"]; roles: ExperienceItem[] }[]
+    {
+      company: string;
+      companyUrl: string | null | undefined;
+      logo: ExperienceItem["logo"];
+      roles: ExperienceItem[];
+    }[]
   >((acc, job) => {
     const company = job.company ?? "";
     const existing = acc.find((g) => g.company === company);
     if (existing) {
       existing.roles.push(job);
     } else {
-      acc.push({ company, logo: job.logo, roles: [job] });
+      acc.push({
+        company,
+        companyUrl: job.companyUrl,
+        logo: job.logo,
+        roles: [job],
+      });
     }
     return acc;
   }, []);
@@ -95,9 +106,22 @@ export default async function Home() {
 
                 {/* Company name + roles — all 14px mono, same text block */}
                 <div className="font-mono leading-snug" style={{ fontSize: 14, width: 415 }}>
-                  <p className="m-0 font-bold uppercase text-accent">
-                    {group.company}
-                  </p>
+                  {group.companyUrl ? (
+                    <a
+                      href={group.companyUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="m-0 inline-flex items-center gap-1 font-bold uppercase text-accent no-underline hover:underline [&>svg]:opacity-0 hover:[&>svg]:opacity-100 [&>svg]:text-accent transition-[text-decoration,opacity]"
+                      style={{ fontSize: 14 }}
+                    >
+                      {group.company}
+                      <ExternalLink size={12} strokeWidth={2.25} className="shrink-0" />
+                    </a>
+                  ) : (
+                    <p className="m-0 font-bold uppercase text-accent">
+                      {group.company}
+                    </p>
+                  )}
                   {group.roles.map((role) => {
                     const startYear = role.startDate
                       ? new Date(role.startDate).getUTCFullYear()

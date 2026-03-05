@@ -90,6 +90,7 @@ export type Experience = {
   _rev: string;
   jobTitle?: string;
   company?: string;
+  companyUrl?: string;
   logo?: {
     asset?: {
       _ref: string;
@@ -553,6 +554,7 @@ export type HOME_QUERYResult = {
     _rev: string;
     jobTitle?: string;
     company?: string;
+    companyUrl?: string;
     logo?: {
       asset?: {
         _ref: string;
@@ -725,6 +727,7 @@ export type ABOUT_QUERYResult = {
     _rev: string;
     jobTitle?: string;
     company?: string;
+    companyUrl?: string;
     logo?: {
       asset?: {
         _ref: string;

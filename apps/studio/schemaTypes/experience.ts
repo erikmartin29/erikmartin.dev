@@ -16,6 +16,12 @@ export const experienceType = defineType({
       type: 'string',
     }),
     defineField({
+      name: 'companyUrl',
+      title: 'Company URL',
+      type: 'url',
+      description: 'Optional link to the company website',
+    }),
+    defineField({
       name: 'logo',
       title: 'Company Logo',
       type: 'image',
