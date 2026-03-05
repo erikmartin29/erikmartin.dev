@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ContentBox } from "@/components/ui/content-box";
 import type { BLOG_QUERYResult } from "@/sanity/sanity.types";
@@ -13,7 +13,7 @@ interface BlogContentProps {
 
 export function BlogContent({ posts }: BlogContentProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
 
   const allTags = useMemo(() => {
     const tagSet = new Set<string>();
@@ -32,25 +32,34 @@ export function BlogContent({ posts }: BlogContentProps) {
         post.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         post.excerpt?.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesTag = !activeTag || post.categories?.includes(activeTag);
+      const matchesTag =
+        selectedTags.size === 0 ||
+        post.categories?.some((cat) => cat && selectedTags.has(cat));
 
       return matchesSearch && matchesTag;
     });
-  }, [posts, searchQuery, activeTag]);
+  }, [posts, searchQuery, selectedTags]);
 
   return (
     <>
       {/* Top spacer */}
       <ContentBox innerClassName="py-[75px]" />
 
+      <ContentBox innerClassName="py-6 px-[15px]" >
+        <h1
+          className="font-serif text-4xl font-bold"
+          style={{ fontFamily: "var(--font-pt-serif), Georgia, serif" }}
+        >
+          Blog
+        </h1>
+      </ContentBox>
+
       {/* Header: title, search, tags */}
       <ContentBox innerClassName="py-4">
-        <h1 className="font-serif text-4xl font-bold mb-4">Blog</h1>
-
         <div className="relative mb-3">
           <Search
             size={14}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 "
           />
           <input
             type="text"
@@ -58,10 +67,10 @@ export function BlogContent({ posts }: BlogContentProps) {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className={cn(
-              "w-full pl-9 pr-4 py-2 rounded-full text-sm font-mono",
+              "w-full pl-9 pr-4 py-1 rounded-full text-sm font-mono",
               "bg-white/20 dark:bg-white/5 border border-foreground/10",
               "placeholder:text-muted-foreground text-foreground",
-              "focus:outline-none focus:ring-1 focus:ring-accent/50",
+              "focus:outline-none focus:ring-1 focus:black/50",
               "transition-all duration-200"
             )}
           />
@@ -70,12 +79,12 @@ export function BlogContent({ posts }: BlogContentProps) {
         {allTags.length > 0 && (
           <div className="flex flex-wrap gap-2">
             <button
-              onClick={() => setActiveTag(null)}
+              onClick={() => setSelectedTags(new Set())}
               className={cn(
-                "px-3 py-1 rounded-full text-xs font-mono border transition-all duration-150",
-                activeTag === null
+                "px-2 py-0.5 rounded-full text-[10px] font-mono border uppercase tracking-wider transition-all duration-150",
+                selectedTags.size === 0
                   ? "bg-foreground text-background border-foreground"
-                  : "bg-white/20 dark:bg-white/5 border-foreground/10 text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+                  : "border-foreground/10 text-muted-foreground"
               )}
             >
               All
@@ -83,12 +92,22 @@ export function BlogContent({ posts }: BlogContentProps) {
             {allTags.map((tag) => (
               <button
                 key={tag}
-                onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+                onClick={() => {
+                  setSelectedTags((prev) => {
+                    const next = new Set(prev);
+                    if (next.has(tag)) {
+                      next.delete(tag);
+                    } else {
+                      next.add(tag);
+                    }
+                    return next;
+                  });
+                }}
                 className={cn(
-                  "px-3 py-1 rounded-full text-xs font-mono border transition-all duration-150",
-                  activeTag === tag
+                  "px-2 py-0.5 rounded-full text-[10px] font-mono border uppercase tracking-wider transition-all duration-150",
+                  selectedTags.has(tag)
                     ? "bg-foreground text-background border-foreground"
-                    : "bg-white/20 dark:bg-white/5 border-foreground/10 text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+                    : "border-foreground/10 text-muted-foreground"
                 )}
               >
                 {tag}
@@ -124,25 +143,26 @@ export function BlogContent({ posts }: BlogContentProps) {
           return (
             <ContentBox
               key={post._id}
-              className="group hover:bg-foreground/3 transition-colors duration-150"
+              className="group"
               innerClassName="py-0"
               showBottomLine={i === filteredPosts.length - 1}
             >
-              <Link href={`/blog/${slug}`} className="block py-5">
+              <Link href={`/blog/${slug}`} className="flex items-center gap-3 py-5">
+                <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 mb-1.5">
-                  {category && (
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono border border-foreground/10 text-muted-foreground uppercase tracking-wider">
-                      {category}
-                    </span>
-                  )}
                   {formattedDate && (
                     <span className="text-xs font-mono text-muted-foreground/60 tracking-wide">
                       {formattedDate}
                     </span>
                   )}
+                  {category && (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono border border-foreground/10 text-muted-foreground uppercase tracking-wider">
+                      {category}
+                    </span>
+                  )}
                 </div>
 
-                <h2 className="font-mono font-bold text-base leading-snug group-hover:text-accent transition-colors duration-150 mb-1">
+                <h2 className="font-mono font-bold text-base leading-snug mb-1">
                   {post.title}
                 </h2>
 
@@ -151,6 +171,11 @@ export function BlogContent({ posts }: BlogContentProps) {
                     {post.excerpt}
                   </p>
                 )}
+                </div>
+                <ChevronRight
+                  size={18}
+                  className="shrink-0 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                />
               </Link>
             </ContentBox>
           );
