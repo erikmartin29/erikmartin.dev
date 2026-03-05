@@ -1,46 +1,27 @@
-import { SanityLive } from "@/sanity/live";
-import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export const metadata = {
-  title: "Erik Martin",
-  description: "Portfolio and blog of Erik Martin, a full-stack developer and designer.",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen flex flex-col antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
+    <html lang="en">
+      <body>
+        <div
+          style={{
+            minHeight: "100vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontFamily: "system-ui, sans-serif",
+            textAlign: "center",
+          }}
         >
-          <Navbar />
-          <main className="flex-1 w-full max-w-5xl mx-auto px-4 md:px-6 pt-32 pb-12 relative z-10">
-            {children}
-          </main>
-          <Footer />
-          <SanityLive />
-        </ThemeProvider>
+          <div>
+            <h1>Under Maintenance 🔨👨🏼‍💻 </h1>
+            <p>Lots of improvements coming soon. We&apos;ll be back shortly.</p>
+            <p>In the meantime, you can follow me on <a href="https://www.linkedin.com/in/erikmartin29/" target="_blank" rel="noopener noreferrer">LinkedIn</a>.</p>
+          </div>
+        </div>
       </body>
     </html>
   );
