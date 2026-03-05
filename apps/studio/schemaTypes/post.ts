@@ -1,4 +1,4 @@
-import { defineField, defineType } from 'sanity'
+import { defineField, defineType, defineArrayMember } from 'sanity'
 
 export const postType = defineType({
   name: 'post',
@@ -48,7 +48,64 @@ export const postType = defineType({
       name: 'body',
       title: 'Body',
       type: 'array',
-      of: [{type: 'block'}],
+      of: [
+        defineArrayMember({ type: 'block' }),
+        defineArrayMember({
+          type: 'image',
+          options: { hotspot: true },
+          fields: [
+            defineField({
+              name: 'caption',
+              title: 'Caption',
+              type: 'string',
+            }),
+            defineField({
+              name: 'alt',
+              title: 'Alt Text',
+              type: 'string',
+            }),
+          ],
+        }),
+        defineArrayMember({
+          type: 'object',
+          name: 'code',
+          title: 'Code Snippet',
+          fields: [
+            defineField({
+              name: 'language',
+              title: 'Language',
+              type: 'string',
+            }),
+            defineField({
+              name: 'filename',
+              title: 'Filename',
+              type: 'string',
+            }),
+            defineField({
+              name: 'code',
+              title: 'Code',
+              type: 'text',
+            }),
+          ],
+        }),
+        defineArrayMember({
+          type: 'object',
+          name: 'customComponent',
+          title: 'Custom Component',
+          fields: [
+            defineField({
+              name: 'componentName',
+              title: 'Component Name',
+              type: 'string',
+            }),
+            defineField({
+              name: 'props',
+              title: 'Props (JSON)',
+              type: 'text',
+            }),
+          ],
+        }),
+      ],
     }),
   ],
 })

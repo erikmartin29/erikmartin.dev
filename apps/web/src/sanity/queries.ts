@@ -56,25 +56,8 @@ export const PROJECTS_QUERY = defineQuery(`*[_type == "project"] | order(order a
   slug,
   "thumbnailUrl": thumbnail.asset->url,
   "thumbnailDimensions": thumbnail.asset->metadata.dimensions,
-  "videoUrl": thumbnailVideo.asset->url
-}`);
-
-export const PROJECT_QUERY = defineQuery(`*[_type == "project" && slug.current == $slug][0] {
-  _id,
-  title,
-  tagline,
-  year,
-  slug,
-  description,
-  tags,
-  link,
-  github,
-  "thumbnailUrl": thumbnail.asset->url,
   "videoUrl": thumbnailVideo.asset->url,
-  body[] {
-    ...,
-    _type == "image" => { ..., asset-> }
-  }
+  "projectPost": projectPost-> { slug }
 }`);
 
 export const BLOG_QUERY = defineQuery(`*[_type == "post"] | order(publishedAt desc) {
@@ -94,7 +77,11 @@ export const POST_QUERY = defineQuery(`*[_type == "post" && slug.current == $slu
   mainImage,
   "categories": categories[]->title,
   publishedAt,
-  body
+  _updatedAt,
+  body[] {
+    ...,
+    _type == "image" => { ..., asset-> }
+  }
 }`);
 
 export const FOOTER_QUERY = defineQuery(`*[_type == "profile"][0] {

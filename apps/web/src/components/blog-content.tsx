@@ -58,7 +58,7 @@ export function BlogContent({ posts }: BlogContentProps) {
       <ContentBox innerClassName="py-4">
         <div className="relative mb-3">
           <Search
-            size={14}
+            size={12}
             className="absolute left-3.5 top-1/2 -translate-y-1/2 "
           />
           <input
@@ -67,7 +67,7 @@ export function BlogContent({ posts }: BlogContentProps) {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className={cn(
-              "w-full pl-9 pr-4 py-1 rounded-full text-sm font-mono",
+              "w-full pl-9 pr-4 py-1 rounded-full text-[12px] font-mono",
               "bg-white/20 dark:bg-white/5 border border-foreground/10",
               "placeholder:text-muted-foreground text-foreground",
               "focus:outline-none focus:ring-1 focus:black/50",

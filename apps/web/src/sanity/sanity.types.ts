@@ -772,21 +772,51 @@ export type PROJECTS_QUERYResult = Array<{
   thumbnailUrl: string | null;
   thumbnailDimensions: SanityImageDimensions | null;
   videoUrl: string | null;
+  projectPost: { slug: Slug | null } | null;
 }>;
-// Variable: PROJECT_QUERY
-// Query: *[_type == "project" && slug.current == $slug][0] {  _id,  title,  tagline,  year,  slug,  description,  tags,  link,  github,  "thumbnailUrl": thumbnail.asset->url,  "videoUrl": thumbnailVideo.asset->url,  body[] {    ...,    _type == "image" => { ..., asset-> }  }}
-export type PROJECT_QUERYResult = {
+// Variable: BLOG_QUERY
+// Query: *[_type == "post"] | order(publishedAt desc) {  _id,  title,  slug,  excerpt,  publishedAt,  "categories": categories[]->title,  mainImage}
+export type BLOG_QUERYResult = Array<{
   _id: string;
   title: string | null;
-  tagline: string | null;
-  year: string | null;
   slug: Slug | null;
-  description: string | null;
-  tags: Array<string> | null;
-  link: string | null;
-  github: string | null;
-  thumbnailUrl: string | null;
-  videoUrl: string | null;
+  excerpt: string | null;
+  publishedAt: string | null;
+  categories: Array<string | null> | null;
+  mainImage: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  } | null;
+}>;
+// Variable: POST_QUERY
+// Query: *[_type == "post" && slug.current == $slug][0] { _id, title, slug, mainImage, "categories": categories[]->title, publishedAt, _updatedAt, body[] { ..., _type == "image" => { ..., asset-> } } }
+export type POST_QUERYResult = {
+  _id: string;
+  title: string | null;
+  slug: Slug | null;
+  mainImage: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  } | null;
+  categories: Array<string | null> | null;
+  publishedAt: string | null;
+  _updatedAt: string;
   body: Array<{
     children?: Array<{
       marks?: Array<string>;
@@ -847,67 +877,6 @@ export type PROJECT_QUERYResult = {
     _key: string;
   }> | null;
 } | null;
-// Variable: BLOG_QUERY
-// Query: *[_type == "post"] | order(publishedAt desc) {  _id,  title,  slug,  excerpt,  publishedAt,  "categories": categories[]->title,  mainImage}
-export type BLOG_QUERYResult = Array<{
-  _id: string;
-  title: string | null;
-  slug: Slug | null;
-  excerpt: string | null;
-  publishedAt: string | null;
-  categories: Array<string | null> | null;
-  mainImage: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  } | null;
-}>;
-// Variable: POST_QUERY
-// Query: *[_type == "post" && slug.current == $slug][0] {  _id,  title,  slug,  mainImage,  "categories": categories[]->title,  publishedAt,  body}
-export type POST_QUERYResult = {
-  _id: string;
-  title: string | null;
-  slug: Slug | null;
-  mainImage: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  } | null;
-  categories: Array<string | null> | null;
-  publishedAt: string | null;
-  body: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: "span";
-      _key: string;
-    }>;
-    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
-    listItem?: "bullet" | "number";
-    markDefs?: Array<{
-      href?: string;
-      _type: "link";
-      _key: string;
-    }>;
-    level?: number;
-    _type: "block";
-    _key: string;
-  }> | null;
-} | null;
 // Variable: FOOTER_QUERY
 // Query: *[_type == "profile"][0] {  socialLinks}
 export type FOOTER_QUERYResult = {
@@ -924,10 +893,9 @@ declare module "@sanity/client" {
   interface SanityQueries {
     "{\n  \"home\": *[_type == \"home\"][0] {\n    ...,\n    \"featuredProjects\": featuredProjects[]-> {\n      _id,\n      title,\n      tagline,\n      year,\n      slug,\n      \"thumbnailUrl\": thumbnail.asset->url,\n      \"videoUrl\": thumbnailVideo.asset->url\n    }\n  },\n  \"profile\": *[_type == \"profile\"][0] {\n    ...,\n    \"resumeURL\": resume.asset->url\n  },\n  \"experience\": *[_type == \"experience\"] | order(startDate desc),\n  \"skills\": *[_type == \"skill\"] | order(order asc) {\n    _id,\n    name,\n    logoLight,\n    logoDark,\n    link,\n    order\n  },\n  \"recentPosts\": *[_type == \"post\"] | order(publishedAt desc)[0...3] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    publishedAt,\n    \"categories\": categories[]->title\n  }\n}": HOME_QUERYResult;
     "{\n  \"profile\": *[_type == \"profile\"][0] {\n    ...,\n    \"resumeURL\": resume.asset->url,\n    bio[] {\n      ...,\n      _type == \"image\" => { ..., asset-> }\n    }\n  },\n  \"experience\": *[_type == \"experience\"] | order(startDate desc)\n}": ABOUT_QUERYResult;
-    "*[_type == \"project\"] | order(order asc, _createdAt desc) {\n  _id,\n  title,\n  tagline,\n  year,\n  slug,\n  \"thumbnailUrl\": thumbnail.asset->url,\n  \"thumbnailDimensions\": thumbnail.asset->metadata.dimensions,\n  \"videoUrl\": thumbnailVideo.asset->url\n}": PROJECTS_QUERYResult;
-    "*[_type == \"project\" && slug.current == $slug][0] {\n  _id,\n  title,\n  tagline,\n  year,\n  slug,\n  description,\n  tags,\n  link,\n  github,\n  \"thumbnailUrl\": thumbnail.asset->url,\n  \"videoUrl\": thumbnailVideo.asset->url,\n  body[] {\n    ...,\n    _type == \"image\" => { ..., asset-> }\n  }\n}": PROJECT_QUERYResult;
+    "*[_type == \"project\"] | order(order asc, _createdAt desc) {\n  _id,\n  title,\n  tagline,\n  year,\n  slug,\n  \"thumbnailUrl\": thumbnail.asset->url,\n  \"thumbnailDimensions\": thumbnail.asset->metadata.dimensions,\n  \"videoUrl\": thumbnailVideo.asset->url,\n  \"projectPost\": projectPost-> { slug }\n}": PROJECTS_QUERYResult;
     "*[_type == \"post\"] | order(publishedAt desc) {\n  _id,\n  title,\n  slug,\n  excerpt,\n  publishedAt,\n  \"categories\": categories[]->title,\n  mainImage\n}": BLOG_QUERYResult;
-    "*[_type == \"post\" && slug.current == $slug][0] {\n  _id,\n  title,\n  slug,\n  mainImage,\n  \"categories\": categories[]->title,\n  publishedAt,\n  body\n}": POST_QUERYResult;
+    "*[_type == \"post\" && slug.current == $slug][0] {\n  _id,\n  title,\n  slug,\n  mainImage,\n  \"categories\": categories[]->title,\n  publishedAt,\n  _updatedAt,\n  body[] {\n    ...,\n    _type == \"image\" => { ..., asset-> }\n  }\n}": POST_QUERYResult;
     "*[_type == \"profile\"][0] {\n  socialLinks\n}": FOOTER_QUERYResult;
   }
 }

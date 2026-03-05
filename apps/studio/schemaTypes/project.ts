@@ -1,4 +1,4 @@
-import { defineField, defineType, defineArrayMember } from 'sanity'
+import { defineField, defineType } from 'sanity'
 
 export const projectType = defineType({
   name: 'project',
@@ -68,67 +68,12 @@ export const projectType = defineType({
       },
     }),
     defineField({
-      name: 'body',
-      title: 'Body',
-      type: 'array',
-      of: [
-        defineArrayMember({ type: 'block' }),
-        defineArrayMember({
-          type: 'image',
-          options: { hotspot: true },
-          fields: [
-            defineField({
-              name: 'caption',
-              title: 'Caption',
-              type: 'string',
-            }),
-            defineField({
-              name: 'alt',
-              title: 'Alt Text',
-              type: 'string',
-            }),
-          ],
-        }),
-        defineArrayMember({
-          type: 'object',
-          name: 'code',
-          title: 'Code Snippet',
-          fields: [
-            defineField({
-              name: 'language',
-              title: 'Language',
-              type: 'string',
-            }),
-            defineField({
-              name: 'filename',
-              title: 'Filename',
-              type: 'string',
-            }),
-            defineField({
-              name: 'code',
-              title: 'Code',
-              type: 'text',
-            }),
-          ],
-        }),
-        defineArrayMember({
-          type: 'object',
-          name: 'customComponent',
-          title: 'Custom Component',
-          fields: [
-            defineField({
-              name: 'componentName',
-              title: 'Component Name',
-              type: 'string',
-            }),
-            defineField({
-              name: 'props',
-              title: 'Props (JSON)',
-              type: 'text',
-            }),
-          ],
-        }),
-      ],
+      name: 'projectPost',
+      title: 'Project Writeup (Blog Post)',
+      type: 'reference',
+      to: [{ type: 'post' }],
+      description:
+        'The blog post containing the full project writeup. Required for all projects (add validation after migration).',
     }),
     defineField({
       name: 'order',

@@ -5,13 +5,18 @@ import { sanityFetch } from "@/sanity/live";
 import { POST_QUERY } from "@/sanity/queries";
 import type { POST_QUERYResult } from "@/sanity/sanity.types";
 import { PortableText } from "@portabletext/react";
+import { projectPortableTextComponents } from "@/components/portable-text";
 import { urlFor } from "@/sanity/client";
 import { notFound } from "next/navigation";
 
-function estimateReadTime(body: POST_QUERYResult["body"]): number {
+function estimateReadTime(body: NonNullable<POST_QUERYResult>["body"]): number {
   if (!body) return 1;
   const text = body
-    .flatMap((block) => block.children?.map((child) => child.text ?? "") ?? [])
+    .flatMap((block) =>
+      "children" in block && Array.isArray(block.children)
+        ? block.children.map((child) => ("text" in child ? child.text ?? "" : ""))
+        : []
+    )
     .join(" ");
   const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.ceil(wordCount / 200));
@@ -113,7 +118,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       {/* Body */}
       <ContentBox innerClassName="py-8" showBottomLine>
         <div className="prose prose-neutral dark:prose-invert max-w-none font-mono text-sm leading-relaxed prose-headings:font-serif prose-headings:font-bold prose-headings:tracking-tight prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-img:rounded-none prose-pre:rounded-none prose-pre:border prose-pre:border-foreground/10 prose-code:text-accent prose-code:font-mono prose-code:text-xs">
-          {post.body ? <PortableText value={post.body} /> : <p>No content yet.</p>}
+          {post.body ? (
+            <PortableText
+              value={post.body}
+              components={projectPortableTextComponents}
+            />
+          ) : (
+            <p>No content yet.</p>
+          )}
         </div>
       </ContentBox>
     </>

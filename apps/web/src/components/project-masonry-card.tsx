@@ -8,7 +8,8 @@ interface ProjectCardProps {
   title: string;
   tagline?: string;
   year?: string;
-  slug: string;
+  /** When set, card links to blog post; when unset, card is not clickable */
+  blogSlug?: string;
   thumbnailUrl?: string;
   videoUrl?: string;
 }
@@ -17,7 +18,7 @@ export function ProjectCard({
   title,
   tagline,
   year,
-  slug,
+  blogSlug,
   thumbnailUrl,
   videoUrl,
 }: ProjectCardProps) {
@@ -38,8 +39,8 @@ export function ProjectCard({
     }
   }, []);
 
-  return (
-    <Link href={`/work/${slug}`} className="group block pb-5">
+  const content = (
+    <>
       <div
         className="relative aspect-4/3 overflow-hidden"
         onMouseEnter={videoUrl ? handleMouseEnter : undefined}
@@ -88,6 +89,15 @@ export function ProjectCard({
           <p className="text-xs text-muted-foreground/80 font-mono">{tagline}</p>
         )}
       </div>
-    </Link>
+    </>
   );
+
+  if (blogSlug) {
+    return (
+      <Link href={`/blog/${blogSlug}`} className="group block pb-5">
+        {content}
+      </Link>
+    );
+  }
+  return <div className="group block pb-5 cursor-default">{content}</div>;
 }
