@@ -101,12 +101,9 @@ export function ProjectCard({
 
       <div className="flex flex-col gap-0.5 mt-2 px-2 pb-2">
         <div className="flex items-baseline justify-between gap-4">
-          <span className="text-sm font-bold text-foreground">{title}</span>
-          {year && (
-            <span className="text-sm font-mono text-muted-foreground/50 uppercase tracking-wider shrink-0">
-              {year}
-            </span>
-          )}
+          <span className="text-sm font-bold text-foreground flex items-baseline gap-2">
+            {title}
+          </span>
         </div>
         {tagline && (
           <p className="text-xs text-muted-foreground/80 font-mono">{tagline}</p>
