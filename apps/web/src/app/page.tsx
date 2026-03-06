@@ -47,7 +47,7 @@ export default async function Home() {
 
   return (
     <>
-      <ContentBox innerClassName="py-[75px]" />
+      <ContentBox innerClassName="py-[75px]" noTransition />
 
       <ContentBox innerClassName="py-[15px] flex flex-col items-center">
         {profile?.profileImage && (
@@ -85,7 +85,7 @@ export default async function Home() {
       </ContentBox>
 
       <ContentBox innerClassName="py-[38px]" />
-      
+
       <ContentBox innerClassName="py-[15px] flex flex-col items-center" showBottomLine>
         <div style={{ width: 453 }}>
           <div className="flex flex-col gap-0.5">
@@ -179,13 +179,11 @@ export default async function Home() {
 
       <ContentBox innerClassName="py-[38px]" />
 
-
       <ContentBox innerClassName="py-[38px] flex flex-col items-center">
         <WorkFolderLink />
       </ContentBox>
 
       <ContentBox innerClassName="py-[38px]" />
-
 
       {profile?.socialLinks?.github && (
         <ContentBox innerClassName="py-[38px] flex flex-col items-center" showBottomLine>

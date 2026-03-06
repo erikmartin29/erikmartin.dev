@@ -16,7 +16,7 @@ export default async function AboutPage() {
 
   return (
     <>
-      <ContentBox innerClassName="py-[75px]" />
+      <ContentBox innerClassName="py-[75px]" noTransition />
 
       <ContentBox innerClassName="py-6 px-[15px]" >
         <h1

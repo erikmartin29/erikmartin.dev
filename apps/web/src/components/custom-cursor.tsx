@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef, useLayoutEffect } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Eye,
@@ -30,7 +31,103 @@ export const CURSOR_VARIANTS = {
   github: { text: "VIEW GITHUB", icon: "github" },
 } as const;
 
-type CursorState = "default" | "click" | "pill";
+type CursorState = "default" | "click" | "pill" | "text";
+
+const TEXT_LEAVE_DELAY_MS = 120;
+
+function isPointInRect(
+  x: number,
+  y: number,
+  rect: DOMRect,
+  tolerance = 8
+): boolean {
+  return (
+    x >= rect.left - tolerance &&
+    x <= rect.right + tolerance &&
+    y >= rect.top - tolerance &&
+    y <= rect.bottom + tolerance
+  );
+}
+
+const DEFAULT_TEXT_CURSOR_HEIGHT = 18;
+const MIN_TEXT_CURSOR_HEIGHT = 14;
+const MAX_TEXT_CURSOR_HEIGHT = 48;
+
+function getTextHoverInfo(clientX: number, clientY: number): {
+  overText: boolean;
+  height: number;
+} {
+  const doc = document;
+  const el = doc.elementFromPoint(clientX, clientY);
+  if (!el) return { overText: false, height: DEFAULT_TEXT_CURSOR_HEIGHT };
+
+  const tag = (el as HTMLElement).tagName?.toLowerCase();
+  if (tag === "input" || tag === "textarea") {
+    const rect = (el as HTMLElement).getBoundingClientRect();
+    return { overText: true, height: rect.height };
+  }
+  if ((el as HTMLElement).isContentEditable || el.closest?.('[contenteditable="true"]')) {
+    // Try caret API for line height; fallback to element height
+    if (typeof doc.caretRangeFromPoint === "function") {
+      try {
+        const range = doc.caretRangeFromPoint(clientX, clientY);
+        if (range?.startContainer) {
+          const rect = range.getBoundingClientRect();
+          if (rect.height > 0) return { overText: true, height: rect.height };
+        }
+      } catch {
+        // ignore
+      }
+    }
+    const target = el.closest('[contenteditable="true"]') ?? el;
+    const rect = (target as HTMLElement).getBoundingClientRect();
+    return { overText: true, height: rect.height };
+  }
+  if (el.closest?.('input, textarea')) {
+    const target = el.closest('input, textarea') as HTMLElement;
+    const rect = target?.getBoundingClientRect();
+    return { overText: true, height: rect?.height ?? DEFAULT_TEXT_CURSOR_HEIGHT };
+  }
+  if (typeof getComputedStyle !== "undefined") {
+    const style = getComputedStyle(el);
+    if (style.cursor === "text") {
+      const rect = (el as HTMLElement).getBoundingClientRect();
+      return { overText: true, height: rect.height };
+    }
+  }
+
+  // caretRangeFromPoint returns nearest text even when over empty space -
+  // verify the point is actually within the text bounds; use rect height for line height
+  if (typeof doc.caretRangeFromPoint === "function") {
+    try {
+      const range = doc.caretRangeFromPoint(clientX, clientY);
+      if (!range?.startContainer) return { overText: false, height: DEFAULT_TEXT_CURSOR_HEIGHT };
+      const rect = range.getBoundingClientRect();
+      if (!isPointInRect(clientX, clientY, rect)) return { overText: false, height: DEFAULT_TEXT_CURSOR_HEIGHT };
+      return { overText: true, height: rect.height || DEFAULT_TEXT_CURSOR_HEIGHT };
+    } catch {
+      // ignore
+    }
+  }
+  const docWithCaret = doc as Document & {
+    caretPositionFromPoint?: (x: number, y: number) => { offsetNode: Node; offset?: number } | null;
+  };
+  if (typeof docWithCaret.caretPositionFromPoint === "function") {
+    try {
+      const pos = docWithCaret.caretPositionFromPoint(clientX, clientY);
+      if (!pos?.offsetNode) return { overText: false, height: DEFAULT_TEXT_CURSOR_HEIGHT };
+      const range = doc.createRange();
+      range.setStart(pos.offsetNode, pos.offset ?? 0);
+      range.collapse(true);
+      const rect = range.getBoundingClientRect();
+      if (!isPointInRect(clientX, clientY, rect)) return { overText: false, height: DEFAULT_TEXT_CURSOR_HEIGHT };
+      return { overText: true, height: rect.height || DEFAULT_TEXT_CURSOR_HEIGHT };
+    } catch {
+      // ignore
+    }
+  }
+  return { overText: false, height: DEFAULT_TEXT_CURSOR_HEIGHT };
+}
 
 function getCursorTarget(el: Element | null): {
   text: string;
@@ -46,11 +143,17 @@ function getCursorTarget(el: Element | null): {
 }
 
 export function CustomCursor() {
+  const pathname = usePathname();
+  const isBlogContentPage = pathname?.startsWith("/blog/") ?? false;
+
   const [mounted, setMounted] = useState(false);
   const [cursorState, setCursorState] = useState<CursorState>("default");
   const [pillContent, setPillContent] = useState<{ text: string; icon: string } | null>(null);
 
   const lastPos = useRef({ x: 0, y: 0 });
+  const textLeaveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [wasOverTextOnClick, setWasOverTextOnClick] = useState(false);
+  const [textCursorHeight, setTextCursorHeight] = useState(DEFAULT_TEXT_CURSOR_HEIGHT);
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const measureRef = useRef<HTMLDivElement>(null);
   const [pillWidth, setPillWidth] = useState(0);
@@ -63,18 +166,62 @@ export function CustomCursor() {
   const updateHover = useCallback((clientX: number, clientY: number) => {
     const el = document.elementFromPoint(clientX, clientY);
     const target = getCursorTarget(el);
+    const textInfo = getTextHoverInfo(clientX, clientY);
+    const isOverPostBodyOrTitle =
+      !!el?.closest("[data-blog-post-body]") || !!el?.closest("[data-blog-post-title]");
+
     if (target) {
+      if (textLeaveTimeout.current) {
+        clearTimeout(textLeaveTimeout.current);
+        textLeaveTimeout.current = null;
+      }
       setPillContent(target);
       setCursorState((prev) => (prev === "click" ? "click" : "pill"));
+    } else if (isBlogContentPage && isOverPostBodyOrTitle && textInfo.overText) {
+      if (textLeaveTimeout.current) {
+        clearTimeout(textLeaveTimeout.current);
+        textLeaveTimeout.current = null;
+      }
+      setTextCursorHeight(textInfo.height);
+      setPillContent(null);
+      setCursorState((prev) => (prev === "click" ? "click" : "text"));
     } else {
       setPillContent(null);
-      setCursorState((prev) => (prev === "click" ? "click" : "default"));
+      setCursorState((prev) => {
+        if (prev === "click") return "click";
+        if (prev === "text") {
+          if (!textLeaveTimeout.current) {
+            textLeaveTimeout.current = setTimeout(() => {
+              textLeaveTimeout.current = null;
+              setCursorState("default");
+            }, TEXT_LEAVE_DELAY_MS);
+          }
+          return "text";
+        }
+        return "default";
+      });
     }
-  }, []);
+  }, [isBlogContentPage]);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Reset text mode when navigating away from blog content page
+  useEffect(() => {
+    if (!isBlogContentPage) {
+      setCursorState((prev) => {
+        if (prev === "text") {
+          if (textLeaveTimeout.current) {
+            clearTimeout(textLeaveTimeout.current);
+            textLeaveTimeout.current = null;
+          }
+          return "default";
+        }
+        return prev;
+      });
+    }
+  }, [isBlogContentPage]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -84,24 +231,48 @@ export function CustomCursor() {
       updateHover(e.clientX, e.clientY);
     };
 
-    const handleMouseDown = () => setCursorState("click");
+    const handleMouseDown = (e: MouseEvent) => {
+      if (textLeaveTimeout.current) {
+        clearTimeout(textLeaveTimeout.current);
+        textLeaveTimeout.current = null;
+      }
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      const isOverPostBodyOrTitle =
+        !!el?.closest("[data-blog-post-body]") || !!el?.closest("[data-blog-post-title]");
+      const textInfo = getTextHoverInfo(e.clientX, e.clientY);
+      const overText = isBlogContentPage && isOverPostBodyOrTitle && textInfo.overText;
+      setWasOverTextOnClick(overText);
+      if (overText) setTextCursorHeight(textInfo.height);
+      setCursorState("click");
+    };
     const handleMouseUp = () => {
       const { x: px, y: py } = lastPos.current;
       const el = document.elementFromPoint(px, py);
       const target = getCursorTarget(el);
+      const isOverPostBodyOrTitle =
+        !!el?.closest("[data-blog-post-body]") || !!el?.closest("[data-blog-post-title]");
+      const textInfo = getTextHoverInfo(px, py);
       setPillContent(target);
-      setCursorState(target ? "pill" : "default");
+      if (target) setCursorState("pill");
+      else if (isBlogContentPage && isOverPostBodyOrTitle && textInfo.overText) {
+        setTextCursorHeight(textInfo.height);
+        setCursorState("text");
+      } else setCursorState("default");
     };
 
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mousedown", handleMouseDown);
     window.addEventListener("mouseup", handleMouseUp);
     return () => {
+      if (textLeaveTimeout.current) {
+        clearTimeout(textLeaveTimeout.current);
+        textLeaveTimeout.current = null;
+      }
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mousedown", handleMouseDown);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [mounted, updatePosition, updateHover]);
+  }, [mounted, isBlogContentPage, updatePosition, updateHover]);
 
   // Only show on pointer devices (not touch)
   const [hasPointer, setHasPointer] = useState(false);
@@ -157,6 +328,9 @@ export function CustomCursor() {
     : Eye;
 
   const isPill = cursorState === "pill" && pillContent;
+  const isText =
+    cursorState === "text" ||
+    (cursorState === "click" && wasOverTextOnClick);
 
   return (
     <motion.div
@@ -183,15 +357,19 @@ export function CustomCursor() {
       )}
 
       <motion.div
-        className="absolute left-0 top-1/2 flex origin-center items-center justify-center gap-1.5 overflow-hidden rounded-full"
+        className={`absolute left-0 top-1/2 flex origin-center items-center justify-center gap-1.5 overflow-hidden ${isText ? "rounded-none" : "rounded-full"}`}
         style={{
           background: "#000",
           color: "#fff",
-          border: "1px solid var(--background)",
+          border: isPill ? "1px solid var(--background)" : "none",
         }}
         animate={{
-          width: isPill ? pillWidth || 10 : 10,
-          height: isPill ? 24 : 10,
+          width: isPill ? pillWidth || 10 : isText ? 2 : 10,
+          height: isPill
+            ? 24
+            : isText
+              ? Math.min(MAX_TEXT_CURSOR_HEIGHT, Math.max(MIN_TEXT_CURSOR_HEIGHT, textCursorHeight))
+              : 10,
           paddingLeft: isPill ? 8 : 0,
           paddingRight: isPill ? 8 : 0,
           opacity: cursorState === "click" ? 0.5 : 1,

@@ -49,9 +49,9 @@ export function Navbar() {
           href={BOOK_TIME_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="font-mono text-[13px] tracking-wide border border-border px-4 py-1.5 transition-opacity hover:opacity-70 bg-foreground text-background"
+          className="font-mono text-[13px] rounded-full tracking-wide border border-border px-4 py-1.5 transition-opacity hover:opacity-70 bg-foreground text-background"
         >
-          BOOK TIME
+          CONTACT
         </a>
       </div>
     </header>

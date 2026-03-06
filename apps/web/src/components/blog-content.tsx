@@ -43,7 +43,7 @@ export function BlogContent({ posts }: BlogContentProps) {
   return (
     <>
       {/* Top spacer */}
-      <ContentBox innerClassName="py-[75px]" />
+      <ContentBox innerClassName="py-[75px]" noTransition />
 
       <ContentBox innerClassName="py-6 px-[15px]" >
         <h1

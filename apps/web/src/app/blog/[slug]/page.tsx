@@ -59,7 +59,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <>
-      <ContentBox innerClassName="py-[75px]" />
+      <ContentBox innerClassName="py-[75px]" noTransition />
 
       <ContentBox innerClassName="py-5" showBottomLine>
         <Link
@@ -72,6 +72,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
         {/* Title */}
         <h1
+          data-blog-post-title
           className="font-serif text-3xl md:text-4xl font-bold leading-tight tracking-tight mb-4"
           style={{ fontFamily: "var(--font-pt-serif), Georgia, serif" }}
         >
@@ -117,7 +118,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
       {/* Body */}
       <ContentBox innerClassName="py-8" showBottomLine>
-        <div className="prose prose-neutral dark:prose-invert max-w-none font-mono text-sm leading-relaxed prose-headings:font-serif prose-headings:font-bold prose-headings:tracking-tight prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-img:rounded-none prose-pre:rounded-none prose-pre:border prose-pre:border-foreground/10 prose-code:text-accent prose-code:font-mono prose-code:text-xs">
+        <div data-blog-post-body className="prose prose-neutral dark:prose-invert max-w-none font-mono text-sm leading-relaxed prose-headings:font-serif prose-headings:font-bold prose-headings:tracking-tight prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-img:rounded-none prose-pre:rounded-none prose-pre:border prose-pre:border-foreground/10 prose-code:text-accent prose-code:font-mono prose-code:text-xs">
           {post.body ? (
             <PortableText
               value={post.body}
