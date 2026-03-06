@@ -167,8 +167,7 @@ export function CustomCursor() {
     const el = document.elementFromPoint(clientX, clientY);
     const target = getCursorTarget(el);
     const textInfo = getTextHoverInfo(clientX, clientY);
-    const isOverPostBodyOrTitle =
-      !!el?.closest("[data-blog-post-body]") || !!el?.closest("[data-blog-post-title]");
+    const isOverPostBody = !!el?.closest("[data-blog-post-body]");
 
     if (target) {
       if (textLeaveTimeout.current) {
@@ -177,7 +176,7 @@ export function CustomCursor() {
       }
       setPillContent(target);
       setCursorState((prev) => (prev === "click" ? "click" : "pill"));
-    } else if (isBlogContentPage && isOverPostBodyOrTitle && textInfo.overText) {
+    } else if (isBlogContentPage && isOverPostBody && textInfo.overText) {
       if (textLeaveTimeout.current) {
         clearTimeout(textLeaveTimeout.current);
         textLeaveTimeout.current = null;
@@ -237,10 +236,9 @@ export function CustomCursor() {
         textLeaveTimeout.current = null;
       }
       const el = document.elementFromPoint(e.clientX, e.clientY);
-      const isOverPostBodyOrTitle =
-        !!el?.closest("[data-blog-post-body]") || !!el?.closest("[data-blog-post-title]");
+      const isOverPostBody = !!el?.closest("[data-blog-post-body]");
       const textInfo = getTextHoverInfo(e.clientX, e.clientY);
-      const overText = isBlogContentPage && isOverPostBodyOrTitle && textInfo.overText;
+      const overText = isBlogContentPage && isOverPostBody && textInfo.overText;
       setWasOverTextOnClick(overText);
       if (overText) setTextCursorHeight(textInfo.height);
       setCursorState("click");
@@ -249,12 +247,11 @@ export function CustomCursor() {
       const { x: px, y: py } = lastPos.current;
       const el = document.elementFromPoint(px, py);
       const target = getCursorTarget(el);
-      const isOverPostBodyOrTitle =
-        !!el?.closest("[data-blog-post-body]") || !!el?.closest("[data-blog-post-title]");
+      const isOverPostBody = !!el?.closest("[data-blog-post-body]");
       const textInfo = getTextHoverInfo(px, py);
       setPillContent(target);
       if (target) setCursorState("pill");
-      else if (isBlogContentPage && isOverPostBodyOrTitle && textInfo.overText) {
+      else if (isBlogContentPage && isOverPostBody && textInfo.overText) {
         setTextCursorHeight(textInfo.height);
         setCursorState("text");
       } else setCursorState("default");

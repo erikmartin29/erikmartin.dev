@@ -50,7 +50,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   if (!post) notFound();
 
-  const category = post.categories?.[0];
+  const categories = (post.categories ?? []).filter((c): c is string => c != null);
   const readTime = estimateReadTime(post.body);
   const publishedStr = post.publishedAt ? formatMetaDate(post.publishedAt) : null;
   const updatedStr = post._updatedAt ? formatMetaDate(post._updatedAt) : null;
@@ -61,60 +61,53 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     <>
       <ContentBox innerClassName="py-[75px]" noTransition />
 
-      <ContentBox innerClassName="py-5" showBottomLine>
-        <Link
+      <ContentBox innerClassName="py-5" >
+      <Link
           href="/blog"
-          className="inline-flex items-center gap-1.5 font-mono text-xs text-muted-foreground hover:text-foreground transition-colors duration-150 mb-5 uppercase tracking-wider"
+          className="inline-flex items-center gap-1.5 font-mono text-xs text-muted-foreground/50 hover:text-foreground transition-colors duration-150 uppercase tracking-wider"
         >
           <ArrowLeft size={12} />
-          Blog
+          <span className="text-xs">Back to Blog</span>
         </Link>
+
 
         {/* Title */}
         <h1
-          data-blog-post-title
-          className="font-serif text-3xl md:text-4xl font-bold leading-tight tracking-tight mb-4"
+          className="font-serif text-3xl md:text-4xl font-bold leading-tight tracking-tight mb-1"
           style={{ fontFamily: "var(--font-pt-serif), Georgia, serif" }}
         >
           {post.title}
         </h1>
 
-        {/* Meta line */}
-        <p className="font-mono text-xs text-muted-foreground/70 uppercase tracking-wide flex flex-wrap items-center gap-x-2 gap-y-1">
-          {publishedStr && (
-            <span>First Published: {publishedStr}</span>
+        <div className="flex flex-row items-center gap-5 flex-nowrap">
+          <p className="font-mono text-xs text-muted-foreground/20 uppercase tracking-wide flex flex-row flex-nowrap items-center gap-x-2 gap-y-0 mb-0 whitespace-nowrap">
+            {publishedStr && (
+              <span>First Published: {publishedStr}</span>
+            )}
+            {showUpdated && (
+              <>
+                <span aria-hidden>·</span>
+                <span>Last Updated: {updatedStr}</span>
+              </>
+            )}
+            <span aria-hidden>·</span>
+            <span>{readTime} min read</span>
+          </p>
+          {categories.length > 0 && (
+            <div className="flex flex-row flex-nowrap gap-2 pl-1">
+              {categories.map((cat) => (
+                <span
+                  key={cat}
+                  className="px-2 py-0.5 rounded-full text-[10px] font-mono border border-foreground/10 text-muted-foreground uppercase tracking-wider whitespace-nowrap"
+                >
+                  {cat}
+                </span>
+              ))}
+            </div>
           )}
-          {showUpdated && (
-            <>
-              <span aria-hidden>·</span>
-              <span>Last Updated: {updatedStr}</span>
-            </>
-          )}
-          <span aria-hidden>·</span>
-          <span>{readTime} min read</span>
-        </p>
+        </div>
 
-                {/* Category */}
-                {category && (
-          <div className="mb-3">
-            <span className="px-2 py-0.5 rounded-sm text-[10px] font-mono bg-foreground text-background uppercase tracking-wider">
-              {category}
-            </span>
-          </div>
-        )}
-
-      </ContentBox>
-
-      {/* Hero image */}
-      {post.mainImage && (
-        <ContentBox innerClassName="py-0" showBottomLine>
-          <img
-            src={urlFor(post.mainImage).width(1200).height(500).url()}
-            alt={post.title ?? "Post image"}
-            className="w-full object-cover max-h-[420px]"
-          />
         </ContentBox>
-      )}
 
       {/* Body */}
       <ContentBox innerClassName="py-8" showBottomLine>

@@ -68,6 +68,12 @@
   --circuit-dot: rgba(255, 255, 255, 0.1);
 }
 
+/* Text selection - primary color text on primary/30 highlight */
+::selection {
+  color: var(--accent);
+  background-color: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
