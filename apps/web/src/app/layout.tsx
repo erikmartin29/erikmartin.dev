@@ -1,6 +1,7 @@
 import { SanityLive } from "@/sanity/live";
 import { Navbar } from "@/components/layout/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
+import { CustomCursor } from "@/components/custom-cursor";
 import { Geist, Geist_Mono, PT_Serif } from "next/font/google";
 import "./globals.css";
 
@@ -52,6 +53,7 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
+          <CustomCursor />
           {/* Full-page vertical guidelines — behind content */}
           <div aria-hidden="true" style={{ ...baseLineStyle, left: LEFT, height: "100%", zIndex: 1 }} />
           <div aria-hidden="true" style={{ ...baseLineStyle, left: RIGHT, height: "100%", zIndex: 1 }} />

@@ -135,3 +135,11 @@ img {
   -o-user-select: none;
   user-select: none;
 }
+
+/* Custom cursor - hide system cursor when custom cursor is active */
+html.custom-cursor-active,
+html.custom-cursor-active *,
+body.custom-cursor-active,
+body.custom-cursor-active * {
+  cursor: none !important;
+}

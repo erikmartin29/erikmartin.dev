@@ -1,4 +1,6 @@
 import { ContentBox } from "@/components/ui/content-box";
+import { CommitGraph } from "@/components/github-contribution-graph";
+import { WorkFolderLink } from "@/components/work-folder-link";
 import { sanityFetch } from "@/sanity/live";
 import { HOME_QUERY } from "@/sanity/queries";
 import type { HOME_QUERYResult } from "@/sanity/sanity.types";
@@ -83,7 +85,7 @@ export default async function Home() {
       </ContentBox>
 
       <ContentBox innerClassName="py-[38px]" />
-
+      
       <ContentBox innerClassName="py-[15px] flex flex-col items-center" showBottomLine>
         <div style={{ width: 453 }}>
           <div className="flex flex-col gap-0.5">
@@ -161,19 +163,37 @@ export default async function Home() {
           {/* Download resume */}
           {profile?.resumeURL && (
             <div className="flex justify-center mt-4">
-              <a
-                href={profile.resumeURL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center rounded-full border border-foreground/10 hover:border-foreground/50 font-mono text-[13px] uppercase text-foreground transition-colors bg-transparent"
-                style={{ width: 240, height: 31 }}
-              >
+<a
+                    href={profile.resumeURL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center rounded-full border border-foreground/10 hover:border-foreground/50 font-mono text-[13px] uppercase text-foreground transition-colors bg-transparent"
+                    style={{ width: 240, height: 31 }}
+                  >
                 DOWNLOAD RESUME
               </a>
             </div>
           )}
         </div>
       </ContentBox>
+
+      <ContentBox innerClassName="py-[38px]" />
+
+
+      <ContentBox innerClassName="py-[38px] flex flex-col items-center">
+        <WorkFolderLink />
+      </ContentBox>
+
+      <ContentBox innerClassName="py-[38px]" />
+
+
+      {profile?.socialLinks?.github && (
+        <ContentBox innerClassName="py-[38px] flex flex-col items-center" showBottomLine>
+          <div style={{ width: 453 }}>
+            <CommitGraph githubUrl={profile.socialLinks.github} />
+          </div>
+        </ContentBox>
+      )}
     </>
   );
 }
