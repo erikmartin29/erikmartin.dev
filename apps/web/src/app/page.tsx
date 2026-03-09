@@ -212,7 +212,7 @@ export default async function Home() {
                     href={profile.resumeURL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center rounded-full border border-foreground/10 hover:border-foreground/50 font-mono text-[13px] uppercase text-foreground transition-colors bg-transparent"
+                    className="flex items-center justify-center rounded-full border border-foreground/10 hover:border-foreground/50 font-mono text-[13px] uppercase text-foreground/80 hover:text-foreground transition-colors bg-transparent"
                     style={{ width: 240, height: 31 }}
                   >
                 DOWNLOAD RESUME
