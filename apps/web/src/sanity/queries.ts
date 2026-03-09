@@ -1,12 +1,23 @@
 import { defineQuery } from "next-sanity";
 
 export const HOME_QUERY = defineQuery(`{
-  "home": *[_type == "home"][0],
+  "home": *[_type == "home"][0] {
+    ...,
+    "featuredProjects": featuredProjects[]-> {
+      _id,
+      title,
+      tagline,
+      year,
+      slug,
+      "thumbnailUrl": thumbnail.asset->url,
+      "videoUrl": thumbnailVideo.asset->url
+    }
+  },
   "profile": *[_type == "profile"][0] {
     ...,
     "resumeURL": resume.asset->url
   },
-  "experience": *[_type == "experience"] | order(startDate desc),
+  "experience": *[_type == "experience"] | order(coalesce(startDate, singleDate) desc),
   "skills": *[_type == "skill"] | order(order asc) {
     _id,
     name,
@@ -14,15 +25,6 @@ export const HOME_QUERY = defineQuery(`{
     logoDark,
     link,
     order
-  },
-  "featuredProjects": *[_type == "project"][0...3] {
-    _id,
-    title,
-    description,
-    slug,
-    tags,
-    link,
-    github
   },
   "recentPosts": *[_type == "post"] | order(publishedAt desc)[0...3] {
     _id,
@@ -37,21 +39,25 @@ export const HOME_QUERY = defineQuery(`{
 export const ABOUT_QUERY = defineQuery(`{
   "profile": *[_type == "profile"][0] {
     ...,
-    "resumeURL": resume.asset->url
+    "resumeURL": resume.asset->url,
+    bio[] {
+      ...,
+      _type == "image" => { ..., asset-> }
+    }
   },
   "experience": *[_type == "experience"] | order(startDate desc)
 }`);
 
-export const PROJECTS_QUERY = defineQuery(`*[_type == "project"] | order(_createdAt desc) {
+export const PROJECTS_QUERY = defineQuery(`*[_type == "project"] | order(order asc, _createdAt desc) {
   _id,
   title,
-  description,
+  tagline,
+  year,
   slug,
-  tags,
-  link,
-  github,
-  image,
-  images
+  "thumbnailUrl": thumbnail.asset->url,
+  "thumbnailDimensions": thumbnail.asset->metadata.dimensions,
+  "videoUrl": thumbnailVideo.asset->url,
+  "projectPost": projectPost-> { slug }
 }`);
 
 export const BLOG_QUERY = defineQuery(`*[_type == "post"] | order(publishedAt desc) {
@@ -71,7 +77,12 @@ export const POST_QUERY = defineQuery(`*[_type == "post" && slug.current == $slu
   mainImage,
   "categories": categories[]->title,
   publishedAt,
-  body
+  _updatedAt,
+  body[] {
+    ...,
+    _type == "image" => { ..., asset-> },
+    _type == "video" => { ..., "videoUrl": asset.asset->url }
+  }
 }`);
 
 export const FOOTER_QUERY = defineQuery(`*[_type == "profile"][0] {

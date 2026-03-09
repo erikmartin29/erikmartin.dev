@@ -1,27 +1,51 @@
 "use client";
 
-import { GlassCard } from "@/components/ui/glass-card";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 
+const CELL_GAP = 3;
+const MIN_CELL_SIZE = 3;
+
 interface CommitData {
-  date: string; // date of the commit(s)
-  count: number; // number of commits on the date
+  date: string;
+  count: number;
 }
 
 interface CommitGraphProps {
   githubUrl: string;
 }
 
+// Primary/accent color from globals.css
+// Light: #0095a8, Dark: #00bcd4
+const ACCENT_LIGHT = { r: 0, g: 149, b: 168 };
+const ACCENT_DARK = { r: 0, g: 188, b: 212 };
+
+function getAccentColors(isDark: boolean) {
+  const accent = isDark ? ACCENT_DARK : ACCENT_LIGHT;
+  return {
+    empty: isDark ? "#161b22" : "#ebedf0",
+    l1: `rgba(${accent.r}, ${accent.g}, ${accent.b}, 0.25)`,
+    l2: `rgba(${accent.r}, ${accent.g}, ${accent.b}, 0.5)`,
+    l3: `rgba(${accent.r}, ${accent.g}, ${accent.b}, 0.75)`,
+    l4: `rgb(${accent.r}, ${accent.g}, ${accent.b})`,
+  };
+}
+
+// GitHub uses 4 contribution levels; 0 = empty
+function getContributionLevel(count: number): 0 | 1 | 2 | 3 | 4 {
+  if (count === 0) return 0;
+  if (count === 1) return 1;
+  if (count <= 4) return 2;
+  if (count <= 9) return 3;
+  return 4;
+}
+
 export function CommitGraph({ githubUrl }: CommitGraphProps) {
   const [contributions, setContributions] = useState<CommitData[]>([]);
   const [totalContributions, setTotalContributions] = useState(0);
-
   const [isLoading, setIsLoading] = useState(false);
-  const [cellSize, setCellSize] = useState(11);
-
-  const graphContainerRef = useRef<HTMLDivElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
+  const [cellSize, setCellSize] = useState(5);
+  const containerRef = useRef<HTMLDivElement>(null);
   const { resolvedTheme } = useTheme();
 
   const getGitHubUsername = (url: string): string | null => {
@@ -38,20 +62,23 @@ export function CommitGraph({ githubUrl }: CommitGraphProps) {
     if (!username) return;
 
     setIsLoading(true);
-    
+
     const fetchCommits = async () => {
       try {
-        const response = await fetch(`/api/github-contributions?username=${username}`);
+        const response = await fetch(
+          `/api/github-contributions?username=${username}`
+        );
         if (response.ok) {
           const data = await response.json();
           if (data.contributions && Array.isArray(data.contributions)) {
             setContributions(data.contributions);
             setTotalContributions(data.total || 0);
-            setIsLoading(false);
             return;
           }
         }
-        console.error("Failed to fetch GitHub contributions: Invalid response or data");
+        console.error(
+          "Failed to fetch GitHub contributions: Invalid response or data"
+        );
       } catch (error) {
         console.error("Failed to fetch GitHub contributions:", error);
       } finally {
@@ -61,146 +88,94 @@ export function CommitGraph({ githubUrl }: CommitGraphProps) {
 
     fetchCommits();
   }, [githubUrl]);
-  // get stepped opacity based on commit count
-  const getOpacity = (count: number): number => {
-    if (count === 0) return 0;
-    if (count <= 2) return 0.25;
-    if (count <= 5) return 0.5;
-    if (count <= 10) return 0.75;
-    return 1.0;
-  };
 
-  // get background color with opacity based on contribution count
-  const getCellStyle = (count: number) => {
-    const isDark = resolvedTheme === 'dark';
-    if (count === 0) {
-      return {
-        backgroundColor: isDark ? '#1a1a1a' : '#ebedf0',
-        opacity: 1,
-      };
-    }
-    const opacity = getOpacity(count);
-    const accentHex = isDark ? '#00bcd4' : '#0095a8';
-    const r = parseInt(accentHex.slice(1, 3), 16);
-    const g = parseInt(accentHex.slice(3, 5), 16);
-    const b = parseInt(accentHex.slice(5, 7), 16);
-    return {
-      backgroundColor: `rgba(${r}, ${g}, ${b}, ${opacity})`,
-    };
-  };
-
-  // group contributions into weeks (API always starts from Sunday)
+  // Group into weeks (7 days each, Sun-Sat)
   const weeks: CommitData[][] = [];
   for (let i = 0; i < contributions.length; i += 7) {
     weeks.push(contributions.slice(i, i + 7));
   }
-  const totalWeeks = weeks.length;
+  const totalWeeks = weeks.length || 53;
 
-  // calculate cell size based on card width
+  // Calculate cell size to fit container (no horizontal scroll)
   useEffect(() => {
-    const calculateCellSize = () => {
-      if (!cardRef.current || totalWeeks === 0) return;
-      
-      const cardWidth = cardRef.current.offsetWidth;
-      const totalPadding = 48;
-      const gapSize = 4; // gap-1 = 4px
-      const totalGaps = (totalWeeks - 1) * gapSize;
-      
-      const availableWidth = cardWidth - totalPadding;
-      const cellWidth = (availableWidth - totalGaps) / totalWeeks;
-      
-      // calculate minimum cell size - smaller on mobile
-      const isMobile = window.innerWidth < 768;
-      const minCellSize = isMobile ? 5 : 10;
-      const calculatedSize = Math.max(minCellSize, Math.floor(cellWidth));
-      
-      // check if graph would overflow - if so, use minimum size
-      const totalGraphWidth = (calculatedSize * totalWeeks) + totalGaps;
-      if (totalGraphWidth > availableWidth && calculatedSize === minCellSize) {
-        setCellSize(minCellSize);
-      } else {
-        setCellSize(calculatedSize);
-      }
+    const el = containerRef.current;
+    if (!el || totalWeeks === 0) return;
+
+    const updateCellSize = () => {
+      const width = el.offsetWidth;
+      const maxCellSize = Math.floor(
+        (width - (totalWeeks - 1) * CELL_GAP) / totalWeeks
+      );
+      setCellSize(Math.max(MIN_CELL_SIZE, maxCellSize));
     };
 
-    // use ResizeObserver for more accurate measurements
-    if (cardRef.current) {
-      calculateCellSize();
-      
-      const resizeObserver = new ResizeObserver(() => {
-        calculateCellSize();
-      });
-      
-      resizeObserver.observe(cardRef.current);
-      window.addEventListener('resize', calculateCellSize);
-      
-      return () => {
-        resizeObserver.disconnect();
-        window.removeEventListener('resize', calculateCellSize);
-      };
-    }
-  }, [totalWeeks, contributions.length]);
+    updateCellSize();
+    const ro = new ResizeObserver(updateCellSize);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [totalWeeks]);
 
-  const username = getGitHubUsername(githubUrl);
+  const cellGap = CELL_GAP;
+
+  const colors = getAccentColors(resolvedTheme === "dark");
+
+  const getCellColor = (count: number): string => {
+    const level = getContributionLevel(count);
+    if (level === 0) return colors.empty;
+    return colors[`l${level}` as keyof typeof colors];
+  };
 
   return (
-    <GlassCard ref={cardRef} className="p-6">
-      <div className="flex items-center justify-between mb-4">
-          <span className="text-base font-medium text-foreground">
-            {isLoading ? "Loading..." : `${totalContributions.toLocaleString()} commits in the past year`}
-          </span>
-        {username && (
-          <a
-            href={githubUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-muted-foreground hover:text-accent transition-colors inline-flex items-center gap-1"
-          >
-            View on GitHub →
-          </a>
-        )}
-      </div>
-
+    <div ref={containerRef} className="w-full font-mono">
       {isLoading ? (
         <div className="flex items-center justify-center h-32">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent" />
         </div>
       ) : (
-        <div 
-          className="w-full py-2 relative overflow-x-auto custom-scrollbar" 
-          ref={graphContainerRef}
+        <a
+          href={githubUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-cursor-text="VIEW GITHUB"
+          data-cursor-icon="github"
+          className="w-full overflow-hidden flex justify-center cursor-pointer"
+          aria-label="View on GitHub"
         >
-          <div className="flex gap-1 justify-center w-full min-w-fit">
+          <div
+            className="flex gap-[3px] shrink-0"
+            style={{ width: weeks.length * (cellSize + cellGap) - cellGap }}
+          >
             {weeks.map((week, weekIndex) => (
-              <div key={weekIndex} className="flex flex-col gap-1">
-                {week.map((day, dayIndex) => (
-                  <div
-                    key={`${day.date}-${dayIndex}`}
-                    className="transition-opacity"
-                    style={{
-                      width: `${cellSize}px`,
-                      height: `${cellSize}px`,
-                      borderRadius: '3px',
-                      ...getCellStyle(day.count),
-                    }}
-                  />
-                ))}
-                {/* Fill remaining days if week is incomplete */}
-                {week.length < 7 && Array.from({ length: 7 - week.length }).map((_, i) => (
-                  <div 
-                    key={`empty-${i}`} 
-                    style={{
-                      width: `${cellSize}px`,
-                      height: `${cellSize}px`,
-                    }}
-                  />
-                ))}
-              </div>
-            ))}
+                <div
+                  key={weekIndex}
+                  className="flex flex-col gap-[3px]"
+                  style={{ width: cellSize }}
+                >
+                  {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
+                    const day = week[dayIndex];
+                    const count = day?.count ?? 0;
+                    return (
+                      <div
+                        key={`${weekIndex}-${dayIndex}`}
+                        className="rounded-[2px]"
+                        style={{
+                          width: cellSize,
+                          height: cellSize,
+                          backgroundColor: getCellColor(count),
+                        }}
+                        title={
+                          day
+                            ? `${day.date}: ${count} contribution${count !== 1 ? "s" : ""}`
+                            : ""
+                        }
+                      />
+                    );
+                  })}
+                </div>
+              ))}
           </div>
-        </div>
+        </a>
       )}
-    </GlassCard>
+    </div>
   );
 }
-
