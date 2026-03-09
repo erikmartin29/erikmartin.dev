@@ -44,6 +44,33 @@ export const profileType = defineType({
               title: 'Alt Text',
               type: 'string',
             }),
+            defineField({
+              name: 'size',
+              title: 'Size',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Small (⅓ width)', value: 'small' },
+                  { title: 'Medium (⅔ width)', value: 'medium' },
+                  { title: 'Large (full width)', value: 'large' },
+                ],
+                layout: 'radio',
+              },
+              initialValue: 'large',
+            }),
+            defineField({
+              name: 'alignment',
+              title: 'Alignment',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Left', value: 'left' },
+                  { title: 'Center', value: 'center' },
+                ],
+                layout: 'radio',
+              },
+              initialValue: 'left',
+            }),
           ],
         }),
       ],

@@ -30,7 +30,7 @@ export default async function AboutPage() {
       <ContentBox innerClassName="py-4" showBottomLine>
 
       {profile?.bio ? (
-          <div className="font-mono text-sm text-muted-foreground leading-relaxed w-full prose prose-neutral dark:prose-invert prose-p:font-mono prose-p:text-sm prose-a:text-accent prose-img:rounded-none">
+          <div className="font-mono text-sm text-muted-foreground leading-relaxed w-full prose prose-neutral dark:prose-invert prose-a:text-accent prose-img:rounded-none">
             <PortableText
               value={profile.bio}
               components={projectPortableTextComponents}

@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
         destination: "/work",
         permanent: true,
       },
+      {
+        source: "/contact",
+        destination: "https://cal.com/erikmartin",
+        permanent: false,
+      },
     ];
   },
   images: {

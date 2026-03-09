@@ -1,7 +1,12 @@
 import type { PortableTextComponents } from "@portabletext/react";
 import Image from "next/image";
+import { ExternalLink } from "lucide-react";
+import { tryGetFile } from "@sanity/asset-utils";
 import { urlFor } from "@/sanity/client";
 import type { ComponentType } from "react";
+
+const SANITY_PROJECT_ID = "5l61z3ol";
+const SANITY_DATASET = "production";
 
 const componentRegistry: Record<string, ComponentType<any>> = {};
 
@@ -10,8 +15,17 @@ export const projectPortableTextComponents: PortableTextComponents = {
     image: ({ value }) => {
       if (!value?.asset) return null;
       const url = urlFor(value).width(1200).url();
+      const size = value.size ?? "large";
+      const alignment = value.alignment ?? "left";
+      const widthClass =
+        size === "small"
+          ? "w-full max-w-full sm:max-w-[33.333%]"
+          : size === "medium"
+            ? "w-full max-w-full sm:max-w-[66.666%]"
+            : "w-full";
+      const alignClass = alignment === "center" ? "sm:mx-auto" : "";
       return (
-        <figure className="my-8">
+        <figure className={`mt-2 mb-8 ${widthClass} ${alignClass}`}>
           <Image
             src={url}
             alt={value.alt ?? ""}
@@ -19,6 +33,51 @@ export const projectPortableTextComponents: PortableTextComponents = {
             height={800}
             sizes="(max-width: 768px) 100vw, 880px"
             className="w-full h-auto"
+          />
+          {value.caption && (
+            <figcaption className="mt-2 text-center text-xs font-mono text-muted-foreground">
+              {value.caption}
+            </figcaption>
+          )}
+        </figure>
+      );
+    },
+
+    video: ({ value }) => {
+      let videoUrl =
+        value?.videoUrl ??
+        (value?.asset && typeof value.asset === "object" && "url" in value.asset
+          ? (value.asset as { url?: string }).url
+          : undefined);
+      if (!videoUrl && value?.asset) {
+        const file = tryGetFile(value.asset, {
+          projectId: SANITY_PROJECT_ID,
+          dataset: SANITY_DATASET,
+        });
+        videoUrl = file?.url;
+      }
+      if (!videoUrl) return null;
+      const size = value.size ?? "large";
+      const alignment = value.alignment ?? "left";
+      const autoplay = value.autoplay ?? false;
+      const muted = value.muted ?? true;
+      const widthClass =
+        size === "small"
+          ? "w-full max-w-full sm:max-w-[33.333%]"
+          : size === "medium"
+            ? "w-full max-w-full sm:max-w-[66.666%]"
+            : "w-full";
+      const alignClass = alignment === "center" ? "sm:mx-auto" : "";
+      return (
+        <figure className={`mt-2 mb-8 ${widthClass} ${alignClass}`}>
+          <video
+            src={videoUrl}
+            controls={!autoplay}
+            autoPlay={autoplay}
+            muted={muted}
+            loop={autoplay}
+            playsInline
+            className="w-full h-auto rounded-sm"
           />
           {value.caption && (
             <figcaption className="mt-2 text-center text-xs font-mono text-muted-foreground">
@@ -64,6 +123,28 @@ export const projectPortableTextComponents: PortableTextComponents = {
         <div className="my-8">
           <Component {...props} />
         </div>
+      );
+    },
+  },
+  block: {
+    normal: ({ children }) => (
+      <p className="pb-[1lh] last-of-type:pb-0 last-of-type:mb-0">{children}</p>
+    ),
+  },
+  marks: {
+    link: ({ value, children }) => {
+      const href = value?.href ?? "#";
+      const isExternal = href.startsWith("http");
+      return (
+        <a
+          href={href}
+          target={isExternal ? "_blank" : undefined}
+          rel={isExternal ? "noopener noreferrer" : undefined}
+          className="underline decoration-current/80 inline-flex items-baseline gap-0.5"
+        >
+          {children}
+          <ExternalLink className="h-[0.75em] w-[0.75em] shrink-0 text-muted-foreground/70" aria-hidden />
+        </a>
       );
     },
   },

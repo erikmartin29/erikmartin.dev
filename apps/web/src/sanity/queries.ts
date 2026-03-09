@@ -80,7 +80,8 @@ export const POST_QUERY = defineQuery(`*[_type == "post" && slug.current == $slu
   _updatedAt,
   body[] {
     ...,
-    _type == "image" => { ..., asset-> }
+    _type == "image" => { ..., asset-> },
+    _type == "video" => { ..., "videoUrl": asset.asset->url }
   }
 }`);
 

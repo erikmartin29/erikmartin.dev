@@ -64,7 +64,104 @@ export const postType = defineType({
               title: 'Alt Text',
               type: 'string',
             }),
+            defineField({
+              name: 'size',
+              title: 'Size',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Small (⅓ width)', value: 'small' },
+                  { title: 'Medium (⅔ width)', value: 'medium' },
+                  { title: 'Large (full width)', value: 'large' },
+                ],
+                layout: 'radio',
+              },
+              initialValue: 'large',
+            }),
+            defineField({
+              name: 'alignment',
+              title: 'Alignment',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Left', value: 'left' },
+                  { title: 'Center', value: 'center' },
+                ],
+                layout: 'radio',
+              },
+              initialValue: 'left',
+            }),
           ],
+        }),
+        defineArrayMember({
+          type: 'object',
+          name: 'video',
+          title: 'Video',
+          fields: [
+            defineField({
+              name: 'asset',
+              title: 'Video File',
+              type: 'file',
+              options: {
+                accept: 'video/mp4,video/webm',
+              },
+            }),
+            defineField({
+              name: 'caption',
+              title: 'Caption',
+              type: 'string',
+            }),
+            defineField({
+              name: 'size',
+              title: 'Size',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Small (⅓ width)', value: 'small' },
+                  { title: 'Medium (⅔ width)', value: 'medium' },
+                  { title: 'Large (full width)', value: 'large' },
+                ],
+                layout: 'radio',
+              },
+              initialValue: 'large',
+            }),
+            defineField({
+              name: 'alignment',
+              title: 'Alignment',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Left', value: 'left' },
+                  { title: 'Center', value: 'center' },
+                ],
+                layout: 'radio',
+              },
+              initialValue: 'left',
+            }),
+            defineField({
+              name: 'autoplay',
+              title: 'Autoplay',
+              type: 'boolean',
+              initialValue: false,
+              description: 'Start playing automatically when in view',
+            }),
+            defineField({
+              name: 'muted',
+              title: 'Mute Audio',
+              type: 'boolean',
+              initialValue: true,
+              description: 'Mute audio (required for autoplay in most browsers)',
+            }),
+          ],
+          preview: {
+            select: { caption: 'caption' },
+            prepare({ caption }) {
+              return {
+                title: 'Video',
+                subtitle: caption ?? 'No caption',
+              };
+            },
+          },
         }),
         defineArrayMember({
           type: 'object',
