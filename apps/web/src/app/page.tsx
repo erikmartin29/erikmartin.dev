@@ -132,7 +132,7 @@ export default async function Home() {
 
       <ContentBox innerClassName="py-[38px]" />
 
-      <ContentBox innerClassName="py-[15px] flex flex-col items-center" showBottomLine>
+      <ContentBox innerClassName="py-[15px] flex flex-col items-center">
         <div style={{ width: 453 }}>
           <div className="flex flex-col gap-0.5">
             {experienceGroups.map((group) => (
