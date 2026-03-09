@@ -82,6 +82,52 @@ export default async function Home() {
             {home.heroSubheading}
           </p>
         )}
+
+        {(profile?.socialLinks?.linkedin ||
+          profile?.socialLinks?.github ||
+          profile?.email) && (
+          <p className="font-mono text-[13px] text-foreground mt-2 text-center">
+            {[
+              profile?.socialLinks?.linkedin && (
+                <a
+                  key="linkedin"
+                  href={profile.socialLinks.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="uppercase no-underline hover:underline transition-colors"
+                >
+                  LINKEDIN
+                </a>
+              ),
+              profile?.socialLinks?.github && (
+                <a
+                  key="github"
+                  href={profile.socialLinks.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="uppercase no-underline hover:underline"
+                >
+                  GITHUB
+                </a>
+              ),
+              profile?.email && (
+                <a
+                  key="email"
+                  href={`mailto:${profile.email}`}
+                  className="uppercase no-underline hover:underline"
+                >
+                  EMAIL
+                </a>
+              ),
+            ]
+              .filter(Boolean)
+              .reduce<React.ReactNode[]>(
+                (acc, el, i) =>
+                  acc.length ? [...acc, <span key={`sep-${i}`}> - </span>, el] : [el],
+                []
+              )}
+          </p>
+        )}
       </ContentBox>
 
       <ContentBox innerClassName="py-[38px]" />
@@ -117,7 +163,6 @@ export default async function Home() {
                       style={{ fontSize: 14 }}
                     >
                       {group.company}
-                      <ExternalLink size={12} strokeWidth={2.25} className="shrink-0" />
                     </a>
                   ) : (
                     <p className="m-0 font-bold uppercase text-accent">
