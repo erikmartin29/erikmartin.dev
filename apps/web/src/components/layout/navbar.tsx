@@ -75,10 +75,16 @@ export function Navbar() {
 
       {/* Mobile only: dropdown menu */}
       {mobileOpen && (
-        <div
-          className="flex md:hidden absolute top-12 left-0 right-0 border-b py-4 px-4 flex-col gap-1"
-          style={{ backgroundColor: "var(--background)", borderColor: "var(--guideline)" }}
-        >
+        <>
+          <div
+            className="fixed inset-0 top-12 left-0 right-0 bottom-0 z-40 md:hidden"
+            onClick={() => setMobileOpen(false)}
+            aria-hidden="true"
+          />
+          <div
+            className="flex md:hidden absolute top-12 left-0 right-0 border-b py-4 px-4 flex-col gap-1 z-50"
+            style={{ backgroundColor: "var(--background)", borderColor: "var(--guideline)" }}
+          >
           {NAV_LINKS.map((link) => {
             const isActive =
               pathname === link.href ||
@@ -110,6 +116,7 @@ export function Navbar() {
             BOOK TIME
           </a>
         </div>
+        </>
       )}
     </header>
   );
