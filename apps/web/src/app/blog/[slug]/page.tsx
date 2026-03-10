@@ -59,7 +59,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <>
-      <ContentBox innerClassName="py-[75px]" noTransition />
+      <ContentBox className="hidden md:block" innerClassName="py-[75px]" noTransition />
 
       <ContentBox innerClassName="py-5" >
       <Link
@@ -79,22 +79,28 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           {post.title}
         </h1>
 
-        <div className="flex flex-row items-center gap-5 flex-nowrap">
-          <p className="font-mono text-xs text-muted-foreground/20 uppercase tracking-wide flex flex-row flex-nowrap items-center gap-x-2 gap-y-0 mb-0 whitespace-nowrap">
-            {publishedStr && (
-              <span>First Published: {publishedStr}</span>
-            )}
+        <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-5">
+          <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-x-2 font-mono text-xs text-muted-foreground/20 uppercase tracking-wide">
+            <div className="flex flex-row items-center gap-x-2 flex-wrap md:flex-nowrap">
+              {publishedStr && (
+                <span>First Published: {publishedStr}</span>
+              )}
+              {showUpdated && (
+                <>
+                  <span aria-hidden className="hidden md:inline">·</span>
+                  <span className="hidden md:inline">Last Updated: {updatedStr}</span>
+                </>
+              )}
+              <span aria-hidden className="hidden md:inline">·</span>
+              <span className="hidden md:inline">{readTime} min read</span>
+            </div>
             {showUpdated && (
-              <>
-                <span aria-hidden>·</span>
-                <span>Last Updated: {updatedStr}</span>
-              </>
+              <span className="md:hidden">Last Updated: {updatedStr}</span>
             )}
-            <span aria-hidden>·</span>
-            <span>{readTime} min read</span>
-          </p>
+            <span className="md:hidden">{readTime} min read</span>
+          </div>
           {categories.length > 0 && (
-            <div className="flex flex-row flex-nowrap gap-2 pl-1">
+            <div className="flex flex-row flex-wrap gap-2 pl-0 md:pl-1">
               {categories.map((cat) => (
                 <span
                   key={cat}

@@ -63,7 +63,7 @@ export default function RootLayout({
           <div aria-hidden="true" style={{ ...baseLineStyle, left: RIGHT, height: "75px", zIndex: 51 }} />
 
           <Navbar />
-          <main className="flex-1 w-full pb-12 relative">
+          <main className="flex-1 w-full pt-12 md:pt-0 pb-12 relative">
             {children}
           </main>
           <SanityLive />
