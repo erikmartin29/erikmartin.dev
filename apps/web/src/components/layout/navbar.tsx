@@ -40,7 +40,7 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "font-mono text-[13px] tracking-wide transition-colors duration-150",
+                  "select-none font-mono text-[13px] tracking-wide transition-colors duration-150",
                   isActive
                     ? "font-medium text-foreground"
                     : "font-light text-muted-foreground hover:text-foreground"
@@ -57,7 +57,7 @@ export function Navbar() {
           href={BOOK_TIME_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden md:inline-flex font-mono text-[13px] rounded-full tracking-wide border border-border px-4 py-1.5 transition-opacity hover:opacity-70 bg-foreground text-background"
+          className="select-none hidden md:inline-flex font-mono text-[13px] rounded-full tracking-wide border border-border px-4 py-1.5 transition-opacity hover:opacity-70 bg-foreground text-background"
         >
           BOOK TIME
         </a>
@@ -96,7 +96,7 @@ export function Navbar() {
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "font-mono text-[13px] tracking-wide py-2 px-2 -mx-2 rounded transition-colors",
+                  "select-none font-mono text-[13px] tracking-wide py-2 px-2 -mx-2 rounded transition-colors",
                   isActive
                     ? "font-medium text-foreground"
                     : "font-light text-muted-foreground"
@@ -111,7 +111,7 @@ export function Navbar() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setMobileOpen(false)}
-            className="font-mono text-[13px] rounded-full tracking-wide border border-border px-4 py-2 mt-2 w-fit transition-opacity hover:opacity-70 bg-foreground text-background"
+            className="select-none font-mono text-[13px] rounded-full tracking-wide border border-border px-4 py-2 mt-2 w-fit transition-opacity hover:opacity-70 bg-foreground text-background"
           >
             BOOK TIME
           </a>

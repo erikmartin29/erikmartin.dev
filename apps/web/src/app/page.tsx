@@ -67,7 +67,7 @@ export default async function Home() {
 
         {heading && (
           <h1
-            className="text-center text-foreground mt-0.5 leading-none text-[2.5rem] md:text-[3rem]"
+            className="select-none text-center text-foreground mt-0.5 leading-none text-[2.5rem] md:text-[3rem]"
             style={{ fontFamily: "var(--font-pt-serif), Georgia, serif" }}
           >
             {parseBold(heading)}
@@ -75,7 +75,7 @@ export default async function Home() {
         )}
 
         {home?.heroSubheading && (
-          <p className="font-mono text-[14px] md:text-[17px] text-foreground mt-1.5 text-center">
+          <p className="select-none font-mono text-[14px] md:text-[17px] text-foreground mt-1.5 text-center">
             {home.heroSubheading}
           </p>
         )}
@@ -91,7 +91,7 @@ export default async function Home() {
                   href={profile.socialLinks.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="uppercase no-underline hover:underline"
+                  className="select-none uppercase no-underline hover:underline"
                 >
                   LINKEDIN
                 </a>
@@ -102,7 +102,7 @@ export default async function Home() {
                   href={profile.socialLinks.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="uppercase no-underline hover:underline"
+                  className="select-none uppercase no-underline hover:underline"
                 >
                   GITHUB
                 </a>
@@ -111,7 +111,7 @@ export default async function Home() {
                 <a
                   key="email"
                   href={`mailto:${profile.email}`}
-                  className="uppercase no-underline hover:underline"
+                  className="select-none uppercase no-underline hover:underline"
                 >
                   EMAIL
                 </a>
@@ -120,7 +120,7 @@ export default async function Home() {
               .filter(Boolean)
               .reduce<React.ReactNode[]>(
                 (acc, el, i) =>
-                  acc.length ? [...acc, <span key={`sep-${i}`}> - </span>, el] : [el],
+                  acc.length ? [...acc, <span key={`sep-${i}`} className="select-none"> - </span>, el] : [el],
                 []
               )}
           </p>
