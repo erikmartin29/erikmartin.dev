@@ -11,7 +11,6 @@ const TRANSITION_DURATION_MS = 500;
 interface ProjectCardProps {
   title: string;
   tagline?: string;
-  year?: string;
   /** When set, card links to blog post; when unset, card is not clickable */
   blogSlug?: string;
   thumbnailUrl?: string;
@@ -21,7 +20,6 @@ interface ProjectCardProps {
 export function ProjectCard({
   title,
   tagline,
-  year,
   blogSlug,
   thumbnailUrl,
   videoUrl,

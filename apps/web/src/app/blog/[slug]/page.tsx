@@ -6,7 +6,6 @@ import { POST_QUERY } from "@/sanity/queries";
 import type { POST_QUERYResult } from "@/sanity/sanity.types";
 import { PortableText } from "@portabletext/react";
 import { projectPortableTextComponents } from "@/components/portable-text";
-import { urlFor } from "@/sanity/client";
 import { notFound } from "next/navigation";
 
 function estimateReadTime(body: NonNullable<POST_QUERYResult>["body"]): number {

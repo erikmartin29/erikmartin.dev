@@ -17,7 +17,6 @@ const FALLBACK_POSTS: BLOG_QUERYResult = [
       "How to build and maintain a design system that works across dozens of products and hundreds of engineers without slowing anyone down.",
     publishedAt: "2026-02-03T12:00:00Z",
     categories: ["Design"],
-    mainImage: null,
   } satisfies BLOG_QUERYResult[number],
   {
     _id: "2",
@@ -27,7 +26,6 @@ const FALLBACK_POSTS: BLOG_QUERYResult = [
       "A practical deep-dive into RSC architecture — what works, what doesn't, and patterns I've found useful after shipping several production apps.",
     publishedAt: "2026-01-18T12:00:00Z",
     categories: ["Engineering"],
-    mainImage: null,
   } satisfies BLOG_QUERYResult[number],
   {
     _id: "3",
@@ -37,7 +35,6 @@ const FALLBACK_POSTS: BLOG_QUERYResult = [
       "Why the handoff between designers and engineers is still broken in 2026, and how design engineering as a discipline is starting to close that gap.",
     publishedAt: "2025-12-10T12:00:00Z",
     categories: ["Design", "Engineering"],
-    mainImage: null,
   } satisfies BLOG_QUERYResult[number],
   {
     _id: "4",
@@ -47,7 +44,6 @@ const FALLBACK_POSTS: BLOG_QUERYResult = [
       "An honest look at how AI coding assistants have changed my daily workflow — the good, the surprising, and the things I still do the old way.",
     publishedAt: "2025-11-22T12:00:00Z",
     categories: ["Engineering"],
-    mainImage: null,
   } satisfies BLOG_QUERYResult[number],
   {
     _id: "5",
@@ -57,7 +53,6 @@ const FALLBACK_POSTS: BLOG_QUERYResult = [
       "Variable fonts, optical sizing, and the new CSS properties that finally make web typography feel as intentional as print.",
     publishedAt: "2025-10-05T12:00:00Z",
     categories: ["Design"],
-    mainImage: null,
   } satisfies BLOG_QUERYResult[number],
   {
     _id: "6",
@@ -67,7 +62,6 @@ const FALLBACK_POSTS: BLOG_QUERYResult = [
       "What I've learned maintaining a large-scale Nx workspace — caching strategies, generator patterns, and keeping CI fast as the codebase grows.",
     publishedAt: "2025-09-14T12:00:00Z",
     categories: ["Engineering"],
-    mainImage: null,
   } satisfies BLOG_QUERYResult[number],
 ];
 

@@ -26,32 +26,6 @@ export const projectType = defineType({
       description: 'Short descriptive text shown under the title on the work grid',
     }),
     defineField({
-      name: 'year',
-      title: 'Year',
-      type: 'string',
-    }),
-    defineField({
-      name: 'description',
-      title: 'Description',
-      type: 'text',
-    }),
-    defineField({
-      name: 'tags',
-      title: 'Tags',
-      type: 'array',
-      of: [{ type: 'string' }],
-    }),
-    defineField({
-      name: 'link',
-      title: 'Live Link',
-      type: 'url',
-    }),
-    defineField({
-      name: 'github',
-      title: 'GitHub Repo',
-      type: 'url',
-    }),
-    defineField({
       name: 'thumbnail',
       title: 'Thumbnail Image',
       type: 'image',
@@ -68,6 +42,17 @@ export const projectType = defineType({
       },
     }),
     defineField({
+      name: 'github',
+      title: 'GitHub Repo',
+      type: 'url',
+    }),
+    defineField({
+      name: 'link',
+      title: 'Live Link',
+      type: 'url',
+      description: 'Optional URL to the deployed site or product',
+    }),
+    defineField({
       name: 'projectPost',
       title: 'Project Writeup (Blog Post)',
       type: 'reference',
@@ -82,4 +67,3 @@ export const projectType = defineType({
     }),
   ],
 })
-

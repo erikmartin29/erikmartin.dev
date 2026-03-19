@@ -1,4 +1,3 @@
-import {testType} from './testType'
 import {profileType} from './profile'
 import {projectType} from './project'
 import {postType} from './post'
@@ -8,7 +7,6 @@ import {homeType} from './home'
 import {skillType} from './skill'
 
 export const schemaTypes = [
-  testType,
   profileType,
   projectType,
   postType,

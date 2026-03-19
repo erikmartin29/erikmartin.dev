@@ -72,14 +72,6 @@ export type Home = {
   _rev: string;
   heroHeading?: string;
   heroSubheading?: string;
-  availabilityStatus?: string;
-  featuredProjects?: Array<{
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    _key: string;
-    [internalGroqTypeReferenceTo]?: "project";
-  }>;
 };
 
 export type Experience = {
@@ -107,26 +99,6 @@ export type Experience = {
   startDate?: string;
   endDate?: string;
   singleDate?: string;
-  location?: string;
-  description?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: "span";
-      _key: string;
-    }>;
-    style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
-    listItem?: "bullet" | "number";
-    markDefs?: Array<{
-      href?: string;
-      _type: "link";
-      _key: string;
-    }>;
-    level?: number;
-    _type: "block";
-    _key: string;
-  }>;
-  technologies?: Array<string>;
 };
 
 export type Category = {
@@ -136,62 +108,6 @@ export type Category = {
   _updatedAt: string;
   _rev: string;
   title?: string;
-  description?: string;
-};
-
-export type Post = {
-  _id: string;
-  _type: "post";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  title?: string;
-  slug?: Slug;
-  excerpt?: string;
-  mainImage?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-  categories?: Array<{
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    _key: string;
-    [internalGroqTypeReferenceTo]?: "category";
-  }>;
-  publishedAt?: string;
-  body?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: "span";
-      _key: string;
-    }>;
-    style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
-    listItem?: "bullet" | "number";
-    markDefs?: Array<{
-      href?: string;
-      _type: "link";
-      _key: string;
-    }>;
-    level?: number;
-    _type: "block";
-    _key: string;
-  }>;
-};
-
-export type Slug = {
-  _type: "slug";
-  current?: string;
-  source?: string;
 };
 
 export type Project = {
@@ -203,11 +119,6 @@ export type Project = {
   title?: string;
   slug?: Slug;
   tagline?: string;
-  year?: string;
-  description?: string;
-  tags?: Array<string>;
-  link?: string;
-  github?: string;
   thumbnail?: {
     asset?: {
       _ref: string;
@@ -230,6 +141,34 @@ export type Project = {
     media?: unknown;
     _type: "file";
   };
+  github?: string;
+  link?: string;
+  projectPost?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "post";
+  };
+  order?: number;
+};
+
+export type Post = {
+  _id: string;
+  _type: "post";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: Slug;
+  excerpt?: string;
+  categories?: Array<{
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    _key: string;
+    [internalGroqTypeReferenceTo]?: "category";
+  }>;
+  publishedAt?: string;
   body?: Array<{
     children?: Array<{
       marks?: Array<string>;
@@ -259,7 +198,27 @@ export type Project = {
     crop?: SanityImageCrop;
     caption?: string;
     alt?: string;
+    size?: "small" | "medium" | "large";
+    alignment?: "left" | "center";
     _type: "image";
+    _key: string;
+  } | {
+    asset?: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
+      };
+      media?: unknown;
+      _type: "file";
+    };
+    caption?: string;
+    size?: "small" | "medium" | "large";
+    alignment?: "left" | "center";
+    autoplay?: boolean;
+    muted?: boolean;
+    _type: "video";
     _key: string;
   } | {
     language?: string;
@@ -267,13 +226,13 @@ export type Project = {
     code?: string;
     _type: "code";
     _key: string;
-  } | {
-    componentName?: string;
-    props?: string;
-    _type: "customComponent";
-    _key: string;
   }>;
-  order?: number;
+};
+
+export type Slug = {
+  _type: "slug";
+  current?: string;
+  source?: string;
 };
 
 export type Profile = {
@@ -283,7 +242,6 @@ export type Profile = {
   _updatedAt: string;
   _rev: string;
   fullName?: string;
-  headline?: string;
   profileImage?: {
     asset?: {
       _ref: string;
@@ -325,11 +283,12 @@ export type Profile = {
     crop?: SanityImageCrop;
     caption?: string;
     alt?: string;
+    size?: "small" | "medium" | "large";
+    alignment?: "left" | "center";
     _type: "image";
     _key: string;
   }>;
   email?: string;
-  location?: string;
   resume?: {
     asset?: {
       _ref: string;
@@ -343,17 +302,7 @@ export type Profile = {
   socialLinks?: {
     github?: string;
     linkedin?: string;
-    twitter?: string;
   };
-};
-
-export type Test = {
-  _id: string;
-  _type: "test";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  name?: string;
 };
 
 export type SanityImagePaletteSwatch = {
@@ -452,40 +401,19 @@ export type Geopoint = {
   alt?: number;
 };
 
-export type AllSanitySchemaTypes = Skill | SanityImageCrop | SanityImageHotspot | Home | Experience | Category | Post | Slug | Project | Profile | Test | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
+export type AllSanitySchemaTypes = Skill | SanityImageCrop | SanityImageHotspot | Home | Experience | Category | Project | Post | Slug | Profile | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ../web/src/sanity/queries.ts
 // Variable: HOME_QUERY
-// Query: {  "home": *[_type == "home"][0] {    ...,    "featuredProjects": featuredProjects[]-> {      _id,      title,      tagline,      year,      slug,      "thumbnailUrl": thumbnail.asset->url,      "videoUrl": thumbnailVideo.asset->url    }  },  "profile": *[_type == "profile"][0] {    ...,    "resumeURL": resume.asset->url  },  "experience": *[_type == "experience"] | order(startDate desc),  "skills": *[_type == "skill"] | order(order asc) {    _id,    name,    logoLight,    logoDark,    link,    order  },  "recentPosts": *[_type == "post"] | order(publishedAt desc)[0...3] {    _id,    title,    slug,    excerpt,    publishedAt,    "categories": categories[]->title  }}
+// Query: {  "home": *[_type == "home"][0] {    heroHeading,    heroSubheading  },  "profile": *[_type == "profile"][0] {    fullName,    profileImage,    email,    socialLinks {      github,      linkedin    },    "resumeURL": resume.asset->url  },  "experience": *[_type == "experience"] | order(coalesce(startDate, singleDate) desc) {    _id,    jobTitle,    company,    companyUrl,    logo,    dateDisplayType,    startDate,    endDate,    singleDate  }}
 export type HOME_QUERYResult = {
   home: {
-    _id: string;
-    _type: "home";
-    _createdAt: string;
-    _updatedAt: string;
-    _rev: string;
-    heroHeading?: string;
-    heroSubheading?: string;
-    availabilityStatus?: string;
-    featuredProjects: Array<{
-      _id: string;
-      title: string | null;
-      tagline: string | null;
-      year: string | null;
-      slug: Slug | null;
-      thumbnailUrl: string | null;
-      videoUrl: string | null;
-    }> | null;
+    heroHeading: string | null;
+    heroSubheading: string | null;
   } | null;
   profile: {
-    _id: string;
-    _type: "profile";
-    _createdAt: string;
-    _updatedAt: string;
-    _rev: string;
-    fullName?: string;
-    headline?: string;
-    profileImage?: {
+    fullName: string | null;
+    profileImage: {
       asset?: {
         _ref: string;
         _type: "reference";
@@ -496,108 +424,20 @@ export type HOME_QUERYResult = {
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
       _type: "image";
-    };
-    bio?: Array<{
-      children?: Array<{
-        marks?: Array<string>;
-        text?: string;
-        _type: "span";
-        _key: string;
-      }>;
-      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
-      listItem?: "bullet" | "number";
-      markDefs?: Array<{
-        href?: string;
-        _type: "link";
-        _key: string;
-      }>;
-      level?: number;
-      _type: "block";
-      _key: string;
-    } | {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
-      media?: unknown;
-      hotspot?: SanityImageHotspot;
-      crop?: SanityImageCrop;
-      caption?: string;
-      alt?: string;
-      _type: "image";
-      _key: string;
-    }>;
-    email?: string;
-    location?: string;
-    resume?: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
-      };
-      media?: unknown;
-      _type: "file";
-    };
-    socialLinks?: {
-      github?: string;
-      linkedin?: string;
-      twitter?: string;
-    };
+    } | null;
+    email: string | null;
+    socialLinks: {
+      github: string | null;
+      linkedin: string | null;
+    } | null;
     resumeURL: string | null;
   } | null;
   experience: Array<{
     _id: string;
-    _type: "experience";
-    _createdAt: string;
-    _updatedAt: string;
-    _rev: string;
-    jobTitle?: string;
-    company?: string;
-    companyUrl?: string;
-    logo?: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
-      media?: unknown;
-      hotspot?: SanityImageHotspot;
-      crop?: SanityImageCrop;
-      _type: "image";
-    };
-    dateDisplayType?: "range" | "single";
-    startDate?: string;
-    endDate?: string;
-    singleDate?: string;
-    location?: string;
-    description?: Array<{
-      children?: Array<{
-        marks?: Array<string>;
-        text?: string;
-        _type: "span";
-        _key: string;
-      }>;
-      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
-      listItem?: "bullet" | "number";
-      markDefs?: Array<{
-        href?: string;
-        _type: "link";
-        _key: string;
-      }>;
-      level?: number;
-      _type: "block";
-      _key: string;
-    }>;
-    technologies?: Array<string>;
-  }>;
-  skills: Array<{
-    _id: string;
-    name: string | null;
-    logoLight: {
+    jobTitle: string | null;
+    company: string | null;
+    companyUrl: string | null;
+    logo: {
       asset?: {
         _ref: string;
         _type: "reference";
@@ -609,53 +449,16 @@ export type HOME_QUERYResult = {
       crop?: SanityImageCrop;
       _type: "image";
     } | null;
-    logoDark: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
-      media?: unknown;
-      hotspot?: SanityImageHotspot;
-      crop?: SanityImageCrop;
-      _type: "image";
-    } | null;
-    link: string | null;
-    order: number | null;
-  }>;
-  recentPosts: Array<{
-    _id: string;
-    title: string | null;
-    slug: Slug | null;
-    excerpt: string | null;
-    publishedAt: string | null;
-    categories: Array<string | null> | null;
+    dateDisplayType: "range" | "single" | null;
+    startDate: string | null;
+    endDate: string | null;
+    singleDate: string | null;
   }>;
 };
 // Variable: ABOUT_QUERY
-// Query: {  "profile": *[_type == "profile"][0] {    ...,    "resumeURL": resume.asset->url,    bio[] {      ...,      _type == "image" => { ..., asset-> }    }  },  "experience": *[_type == "experience"] | order(startDate desc)}
+// Query: {  "profile": *[_type == "profile"][0] {    bio[] {      ...,      _type == "image" => { ..., asset-> }    }  }}
 export type ABOUT_QUERYResult = {
   profile: {
-    _id: string;
-    _type: "profile";
-    _createdAt: string;
-    _updatedAt: string;
-    _rev: string;
-    fullName?: string;
-    headline?: string;
-    profileImage?: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
-      media?: unknown;
-      hotspot?: SanityImageHotspot;
-      crop?: SanityImageCrop;
-      _type: "image";
-    };
     bio: Array<{
       children?: Array<{
         marks?: Array<string>;
@@ -701,90 +504,29 @@ export type ABOUT_QUERYResult = {
       crop?: SanityImageCrop;
       caption?: string;
       alt?: string;
+      size?: "large" | "medium" | "small";
+      alignment?: "center" | "left";
       _type: "image";
       _key: string;
     }> | null;
-    email?: string;
-    location?: string;
-    resume?: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
-      };
-      media?: unknown;
-      _type: "file";
-    };
-    socialLinks?: {
-      github?: string;
-      linkedin?: string;
-      twitter?: string;
-    };
-    resumeURL: string | null;
   } | null;
-  experience: Array<{
-    _id: string;
-    _type: "experience";
-    _createdAt: string;
-    _updatedAt: string;
-    _rev: string;
-    jobTitle?: string;
-    company?: string;
-    companyUrl?: string;
-    logo?: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
-      media?: unknown;
-      hotspot?: SanityImageHotspot;
-      crop?: SanityImageCrop;
-      _type: "image";
-    };
-    dateDisplayType?: "range" | "single";
-    startDate?: string;
-    endDate?: string;
-    singleDate?: string;
-    location?: string;
-    description?: Array<{
-      children?: Array<{
-        marks?: Array<string>;
-        text?: string;
-        _type: "span";
-        _key: string;
-      }>;
-      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
-      listItem?: "bullet" | "number";
-      markDefs?: Array<{
-        href?: string;
-        _type: "link";
-        _key: string;
-      }>;
-      level?: number;
-      _type: "block";
-      _key: string;
-    }>;
-    technologies?: Array<string>;
-  }>;
 };
 // Variable: PROJECTS_QUERY
-// Query: *[_type == "project"] | order(order asc, _createdAt desc) {  _id,  title,  tagline,  year,  slug,  "thumbnailUrl": thumbnail.asset->url,  "thumbnailDimensions": thumbnail.asset->metadata.dimensions,  "videoUrl": thumbnailVideo.asset->url}
+// Query: *[_type == "project"] | order(order asc, _createdAt desc) {  _id,  title,  tagline,  github,  link,  "thumbnailUrl": thumbnail.asset->url,  "videoUrl": thumbnailVideo.asset->url,  "projectPost": projectPost-> { slug }}
 export type PROJECTS_QUERYResult = Array<{
   _id: string;
   title: string | null;
   tagline: string | null;
-  year: string | null;
-  slug: Slug | null;
+  github: string | null;
+  link: string | null;
   thumbnailUrl: string | null;
-  thumbnailDimensions: SanityImageDimensions | null;
   videoUrl: string | null;
-  projectPost: { slug: Slug | null } | null;
+  projectPost: {
+    slug: Slug | null;
+  } | null;
 }>;
 // Variable: BLOG_QUERY
-// Query: *[_type == "post"] | order(publishedAt desc) {  _id,  title,  slug,  excerpt,  publishedAt,  "categories": categories[]->title,  mainImage}
+// Query: *[_type == "post"] | order(publishedAt desc) {  _id,  title,  slug,  excerpt,  publishedAt,  "categories": categories[]->title}
 export type BLOG_QUERYResult = Array<{
   _id: string;
   title: string | null;
@@ -792,37 +534,13 @@ export type BLOG_QUERYResult = Array<{
   excerpt: string | null;
   publishedAt: string | null;
   categories: Array<string | null> | null;
-  mainImage: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  } | null;
 }>;
 // Variable: POST_QUERY
-// Query: *[_type == "post" && slug.current == $slug][0] { _id, title, slug, mainImage, "categories": categories[]->title, publishedAt, _updatedAt, body[] { ..., _type == "image" => { ..., asset-> } } }
+// Query: *[_type == "post" && slug.current == $slug][0] {  _id,  title,  slug,  "categories": categories[]->title,  publishedAt,  _updatedAt,  body[] {    ...,    _type == "image" => { ..., asset-> },    _type == "video" => { ..., "videoUrl": asset.asset->url }  }}
 export type POST_QUERYResult = {
   _id: string;
   title: string | null;
   slug: Slug | null;
-  mainImage: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  } | null;
   categories: Array<string | null> | null;
   publishedAt: string | null;
   _updatedAt: string;
@@ -848,11 +566,6 @@ export type POST_QUERYResult = {
     filename?: string;
     code?: string;
     _type: "code";
-    _key: string;
-  } | {
-    componentName?: string;
-    props?: string;
-    _type: "customComponent";
     _key: string;
   } | {
     asset: {
@@ -882,29 +595,40 @@ export type POST_QUERYResult = {
     crop?: SanityImageCrop;
     caption?: string;
     alt?: string;
+    size?: "large" | "medium" | "small";
+    alignment?: "center" | "left";
     _type: "image";
     _key: string;
+  } | {
+    asset?: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
+      };
+      media?: unknown;
+      _type: "file";
+    };
+    caption?: string;
+    size?: "large" | "medium" | "small";
+    alignment?: "center" | "left";
+    autoplay?: boolean;
+    muted?: boolean;
+    _type: "video";
+    _key: string;
+    videoUrl: string | null;
   }> | null;
-} | null;
-// Variable: FOOTER_QUERY
-// Query: *[_type == "profile"][0] {  socialLinks}
-export type FOOTER_QUERYResult = {
-  socialLinks: {
-    github?: string;
-    linkedin?: string;
-    twitter?: string;
-  } | null;
 } | null;
 
 // Query TypeMap
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "{\n  \"home\": *[_type == \"home\"][0] {\n    ...,\n    \"featuredProjects\": featuredProjects[]-> {\n      _id,\n      title,\n      tagline,\n      year,\n      slug,\n      \"thumbnailUrl\": thumbnail.asset->url,\n      \"videoUrl\": thumbnailVideo.asset->url\n    }\n  },\n  \"profile\": *[_type == \"profile\"][0] {\n    ...,\n    \"resumeURL\": resume.asset->url\n  },\n  \"experience\": *[_type == \"experience\"] | order(startDate desc),\n  \"skills\": *[_type == \"skill\"] | order(order asc) {\n    _id,\n    name,\n    logoLight,\n    logoDark,\n    link,\n    order\n  },\n  \"recentPosts\": *[_type == \"post\"] | order(publishedAt desc)[0...3] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    publishedAt,\n    \"categories\": categories[]->title\n  }\n}": HOME_QUERYResult;
-    "{\n  \"profile\": *[_type == \"profile\"][0] {\n    ...,\n    \"resumeURL\": resume.asset->url,\n    bio[] {\n      ...,\n      _type == \"image\" => { ..., asset-> }\n    }\n  },\n  \"experience\": *[_type == \"experience\"] | order(startDate desc)\n}": ABOUT_QUERYResult;
-    "*[_type == \"project\"] | order(order asc, _createdAt desc) {\n  _id,\n  title,\n  tagline,\n  year,\n  slug,\n  \"thumbnailUrl\": thumbnail.asset->url,\n  \"thumbnailDimensions\": thumbnail.asset->metadata.dimensions,\n  \"videoUrl\": thumbnailVideo.asset->url,\n  \"projectPost\": projectPost-> { slug }\n}": PROJECTS_QUERYResult;
-    "*[_type == \"post\"] | order(publishedAt desc) {\n  _id,\n  title,\n  slug,\n  excerpt,\n  publishedAt,\n  \"categories\": categories[]->title,\n  mainImage\n}": BLOG_QUERYResult;
-    "*[_type == \"post\" && slug.current == $slug][0] {\n  _id,\n  title,\n  slug,\n  mainImage,\n  \"categories\": categories[]->title,\n  publishedAt,\n  _updatedAt,\n  body[] {\n    ...,\n    _type == \"image\" => { ..., asset-> }\n  }\n}": POST_QUERYResult;
-    "*[_type == \"profile\"][0] {\n  socialLinks\n}": FOOTER_QUERYResult;
+    "{\n  \"home\": *[_type == \"home\"][0] {\n    heroHeading,\n    heroSubheading\n  },\n  \"profile\": *[_type == \"profile\"][0] {\n    fullName,\n    profileImage,\n    email,\n    socialLinks {\n      github,\n      linkedin\n    },\n    \"resumeURL\": resume.asset->url\n  },\n  \"experience\": *[_type == \"experience\"] | order(coalesce(startDate, singleDate) desc) {\n    _id,\n    jobTitle,\n    company,\n    companyUrl,\n    logo,\n    dateDisplayType,\n    startDate,\n    endDate,\n    singleDate\n  }\n}": HOME_QUERYResult;
+    "{\n  \"profile\": *[_type == \"profile\"][0] {\n    bio[] {\n      ...,\n      _type == \"image\" => { ..., asset-> }\n    }\n  }\n}": ABOUT_QUERYResult;
+    "*[_type == \"project\"] | order(order asc, _createdAt desc) {\n  _id,\n  title,\n  tagline,\n  github,\n  link,\n  \"thumbnailUrl\": thumbnail.asset->url,\n  \"videoUrl\": thumbnailVideo.asset->url,\n  \"projectPost\": projectPost-> { slug }\n}": PROJECTS_QUERYResult;
+    "*[_type == \"post\"] | order(publishedAt desc) {\n  _id,\n  title,\n  slug,\n  excerpt,\n  publishedAt,\n  \"categories\": categories[]->title\n}": BLOG_QUERYResult;
+    "*[_type == \"post\" && slug.current == $slug][0] {\n  _id,\n  title,\n  slug,\n  \"categories\": categories[]->title,\n  publishedAt,\n  _updatedAt,\n  body[] {\n    ...,\n    _type == \"image\" => { ..., asset-> },\n    _type == \"video\" => { ..., \"videoUrl\": asset.asset->url }\n  }\n}": POST_QUERYResult;
   }
 }
