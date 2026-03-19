@@ -73,23 +73,6 @@ export const experienceType = defineType({
       description: 'The single year or date to display',
       hidden: ({ parent }) => parent?.dateDisplayType !== 'single',
     }),
-    defineField({
-      name: 'location',
-      title: 'Location',
-      type: 'string',
-    }),
-    defineField({
-      name: 'description',
-      title: 'Description',
-      type: 'array',
-      of: [{type: 'block'}],
-    }),
-    defineField({
-      name: 'technologies',
-      title: 'Technologies',
-      type: 'array',
-      of: [{type: 'string'}],
-    }),
   ],
   preview: {
     select: {

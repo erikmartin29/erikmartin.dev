@@ -15,19 +15,5 @@ export const homeType = defineType({
       title: 'Hero Subheading',
       type: 'text',
     }),
-    defineField({
-      name: 'availabilityStatus',
-      title: 'Availability Status',
-      type: 'string',
-      description: 'e.g. "Available for new projects"'
-    }),
-    defineField({
-      name: 'featuredProjects',
-      title: 'Featured Projects',
-      type: 'array',
-      of: [{ type: 'reference', to: { type: 'project' } }],
-      validation: (Rule) => Rule.max(2),
-    }),
   ],
 })
-
