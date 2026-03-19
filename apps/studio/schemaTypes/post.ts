@@ -26,14 +26,6 @@ export const postType = defineType({
       rows: 3
     }),
     defineField({
-      name: 'mainImage',
-      title: 'Main image',
-      type: 'image',
-      options: {
-        hotspot: true,
-      },
-    }),
-    defineField({
       name: 'categories',
       title: 'Categories',
       type: 'array',
@@ -181,23 +173,6 @@ export const postType = defineType({
             defineField({
               name: 'code',
               title: 'Code',
-              type: 'text',
-            }),
-          ],
-        }),
-        defineArrayMember({
-          type: 'object',
-          name: 'customComponent',
-          title: 'Custom Component',
-          fields: [
-            defineField({
-              name: 'componentName',
-              title: 'Component Name',
-              type: 'string',
-            }),
-            defineField({
-              name: 'props',
-              title: 'Props (JSON)',
               type: 'text',
             }),
           ],

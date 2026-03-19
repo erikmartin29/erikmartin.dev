@@ -26,7 +26,6 @@ export default defineMigration({
         body: project.body,
         categories: [{ _type: 'reference' as const, _ref: PROJECT_CATEGORY_ID }],
         publishedAt: project._createdAt ?? project._updatedAt ?? new Date().toISOString(),
-        mainImage: project.thumbnail,
       }
 
       return [
@@ -34,7 +33,6 @@ export default defineMigration({
           _id: PROJECT_CATEGORY_ID,
           _type: 'category',
           title: 'Project',
-          description: 'Blog posts that are project writeups',
         }),
         createIfNotExists(postDoc),
         patch(project._id, [

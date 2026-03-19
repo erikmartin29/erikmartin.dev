@@ -35,7 +35,6 @@ export default async function WorkPage() {
               key={project._id}
               title={project.title ?? "Untitled"}
               tagline={project.tagline ?? undefined}
-              year={project.year ?? undefined}
               blogSlug={project.projectPost?.slug?.current ?? undefined}
               thumbnailUrl={project.thumbnailUrl ?? undefined}
               videoUrl={project.videoUrl ?? undefined}

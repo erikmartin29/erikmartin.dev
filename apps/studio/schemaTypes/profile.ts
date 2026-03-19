@@ -11,12 +11,6 @@ export const profileType = defineType({
       type: 'string',
     }),
     defineField({
-      name: 'headline',
-      title: 'Headline',
-      type: 'string',
-      description: 'e.g. Creative Developer'
-    }),
-    defineField({
       name: 'profileImage',
       title: 'Profile Image',
       type: 'image',
@@ -81,11 +75,6 @@ export const profileType = defineType({
       type: 'string',
     }),
     defineField({
-      name: 'location',
-      title: 'Location',
-      type: 'string',
-    }),
-    defineField({
       name: 'resume',
       title: 'Resume PDF',
       type: 'file',
@@ -97,8 +86,7 @@ export const profileType = defineType({
       fields: [
         defineField({ name: 'github', type: 'url', title: 'GitHub URL' }),
         defineField({ name: 'linkedin', type: 'url', title: 'LinkedIn URL' }),
-        defineField({ name: 'twitter', type: 'url', title: 'Twitter/X URL' }),
-      ]
-    })
+      ],
+    }),
   ],
 })

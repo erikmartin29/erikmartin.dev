@@ -35,7 +35,7 @@ export const skillType = defineType({
       name: 'link',
       title: 'Link',
       type: 'url',
-      description: 'Optional link to the skill\'s website or documentation',
+      description: "Optional link to the skill's website or documentation",
     }),
     defineField({
       name: 'order',
@@ -51,4 +51,3 @@ export const skillType = defineType({
     },
   },
 })
-
