@@ -5,8 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { CursorTarget } from "@/components/cursor-target";
 
-const HOVER_DELAY_MS = 400;
-const TRANSITION_DURATION_MS = 500;
+const HOVER_DELAY_MS = 0;
+const TRANSITION_DURATION_MS = 200;
 
 interface ProjectCardProps {
   title: string;
@@ -63,25 +63,6 @@ export function ProjectCard({
         onMouseEnter={videoUrl ? handleMouseEnter : undefined}
         onMouseLeave={videoUrl ? handleMouseLeave : undefined}
       >
-        {thumbnailUrl ? (
-          <Image
-            src={thumbnailUrl}
-            alt={title}
-            fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className={`object-cover transition-all ease-out group-hover:scale-[1.02] ${
-              videoUrl && videoReady
-                ? "opacity-0 pointer-events-none"
-                : "opacity-100"
-            }`}
-            style={{ transitionDuration: `${TRANSITION_DURATION_MS}ms` }}
-          />
-        ) : !videoUrl ? (
-          <div className="absolute inset-0 bg-foreground/5 flex items-center justify-center text-muted-foreground text-sm">
-            No Preview
-          </div>
-        ) : null}
-
         {videoUrl && (
           <video
             ref={videoRef}
@@ -89,12 +70,31 @@ export function ProjectCard({
             loop
             muted
             playsInline
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity ease-out ${
+            className={`absolute inset-0 z-0 w-full h-full object-cover transition-opacity ease-out ${
               videoReady ? "opacity-100" : "opacity-0"
             }`}
             style={{ transitionDuration: `${TRANSITION_DURATION_MS}ms` }}
           />
         )}
+
+        {thumbnailUrl ? (
+          <Image
+            src={thumbnailUrl}
+            alt={title}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className={`z-10 object-cover transition-all ease-out group-hover:scale-[1.08] ${
+              videoUrl && videoReady
+                ? "opacity-0 pointer-events-none"
+                : "opacity-100"
+            }`}
+            style={{ transitionDuration: `${TRANSITION_DURATION_MS}ms` }}
+          />
+        ) : !videoUrl ? (
+          <div className="absolute inset-0 z-10 bg-foreground/5 flex items-center justify-center text-muted-foreground text-sm">
+            No Preview
+          </div>
+        ) : null}
       </div>
 
       <div className="flex flex-col gap-0.5 mt-2 px-2 pb-2">
