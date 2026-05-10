@@ -1,5 +1,4 @@
 import { ContentBox } from "@/components/ui/content-box";
-import { CommitGraph } from "@/components/github-contribution-graph";
 import { WorkFolderLink } from "@/components/work-folder-link";
 import { ExperienceSection } from "@/components/experience-section";
 import { sanityFetch } from "@/sanity/live";
@@ -138,19 +137,9 @@ export default async function Home() {
 
       <ContentBox innerClassName="py-[19px] md:py-[38px]" />
 
-      <ContentBox innerClassName="py-[38px] flex flex-col items-center">
+      <ContentBox innerClassName="py-[38px] flex flex-col items-center" showBottomLine>
         <WorkFolderLink />
       </ContentBox>
-
-      <ContentBox innerClassName="py-[19px] md:py-[38px]" />
-
-      {profile?.socialLinks?.github && (
-        <ContentBox innerClassName="py-[38px] flex flex-col items-center" showBottomLine>
-          <div style={{ width: 453 }}>
-            <CommitGraph githubUrl={profile.socialLinks.github} />
-          </div>
-        </ContentBox>
-      )}
     </>
   );
 }
