@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef, useLayoutEffect } from "react";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue } from "framer-motion";
 import {
   Eye,
   ExternalLink,
@@ -33,7 +33,8 @@ export const CURSOR_VARIANTS = {
 
 type CursorState = "default" | "click" | "pill" | "text";
 
-const TEXT_LEAVE_DELAY_MS = 120;
+const TEXT_LEAVE_DELAY_MS = 20;
+const PILL_LEAVE_DELAY_MS = 20;
 
 function isPointInRect(
   x: number,
@@ -152,16 +153,37 @@ export function CustomCursor() {
 
   const lastPos = useRef({ x: 0, y: 0 });
   const textLeaveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pillLeaveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hoverRaf = useRef<number | null>(null);
+  const pendingHover = useRef({ x: 0, y: 0 });
+  const lastPillWidth = useRef(0);
+  const [inViewport, setInViewport] = useState(false);
   const [wasOverTextOnClick, setWasOverTextOnClick] = useState(false);
   const [textCursorHeight, setTextCursorHeight] = useState(DEFAULT_TEXT_CURSOR_HEIGHT);
-  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const cursorX = useMotionValue(0);
+  const cursorY = useMotionValue(0);
   const measureRef = useRef<HTMLDivElement>(null);
   const [pillWidth, setPillWidth] = useState(0);
 
+  const clearTextLeaveTimeout = useCallback(() => {
+    if (textLeaveTimeout.current) {
+      clearTimeout(textLeaveTimeout.current);
+      textLeaveTimeout.current = null;
+    }
+  }, []);
+
+  const clearPillLeaveTimeout = useCallback(() => {
+    if (pillLeaveTimeout.current) {
+      clearTimeout(pillLeaveTimeout.current);
+      pillLeaveTimeout.current = null;
+    }
+  }, []);
+
   const updatePosition = useCallback((clientX: number, clientY: number) => {
     lastPos.current = { x: clientX, y: clientY };
-    setPos({ x: clientX, y: clientY });
-  }, []);
+    cursorX.set(clientX);
+    cursorY.set(clientY);
+  }, [cursorX, cursorY]);
 
   const updateHover = useCallback((clientX: number, clientY: number) => {
     const el = document.elementFromPoint(clientX, clientY);
@@ -170,37 +192,40 @@ export function CustomCursor() {
     const isOverPostBody = !!el?.closest("[data-blog-post-body]");
 
     if (target) {
-      if (textLeaveTimeout.current) {
-        clearTimeout(textLeaveTimeout.current);
-        textLeaveTimeout.current = null;
-      }
+      clearTextLeaveTimeout();
+      clearPillLeaveTimeout();
       setPillContent(target);
       setCursorState((prev) => (prev === "click" ? "click" : "pill"));
     } else if (isBlogContentPage && isOverPostBody && textInfo.overText) {
-      if (textLeaveTimeout.current) {
-        clearTimeout(textLeaveTimeout.current);
-        textLeaveTimeout.current = null;
-      }
+      clearTextLeaveTimeout();
+      clearPillLeaveTimeout();
       setTextCursorHeight(textInfo.height);
       setPillContent(null);
       setCursorState((prev) => (prev === "click" ? "click" : "text"));
     } else {
-      setPillContent(null);
       setCursorState((prev) => {
         if (prev === "click") return "click";
+        if (prev === "pill") {
+          clearPillLeaveTimeout();
+          pillLeaveTimeout.current = setTimeout(() => {
+            pillLeaveTimeout.current = null;
+            setPillContent(null);
+            setCursorState((state) => (state === "pill" ? "default" : state));
+          }, PILL_LEAVE_DELAY_MS);
+          return "pill";
+        }
         if (prev === "text") {
-          if (!textLeaveTimeout.current) {
-            textLeaveTimeout.current = setTimeout(() => {
-              textLeaveTimeout.current = null;
-              setCursorState("default");
-            }, TEXT_LEAVE_DELAY_MS);
-          }
+          clearTextLeaveTimeout();
+          textLeaveTimeout.current = setTimeout(() => {
+            textLeaveTimeout.current = null;
+            setCursorState((state) => (state === "text" ? "default" : state));
+          }, TEXT_LEAVE_DELAY_MS);
           return "text";
         }
         return "default";
       });
     }
-  }, [isBlogContentPage]);
+  }, [isBlogContentPage, clearTextLeaveTimeout, clearPillLeaveTimeout]);
 
   useEffect(() => {
     setMounted(true);
@@ -209,67 +234,84 @@ export function CustomCursor() {
   // Reset text mode when navigating away from blog content page
   useEffect(() => {
     if (!isBlogContentPage) {
-      setCursorState((prev) => {
-        if (prev === "text") {
-          if (textLeaveTimeout.current) {
-            clearTimeout(textLeaveTimeout.current);
-            textLeaveTimeout.current = null;
-          }
-          return "default";
-        }
-        return prev;
-      });
+      clearTextLeaveTimeout();
+      setCursorState((prev) => (prev === "text" ? "default" : prev));
     }
-  }, [isBlogContentPage]);
+  }, [isBlogContentPage, clearTextLeaveTimeout]);
 
   useEffect(() => {
     if (!mounted) return;
 
     const handleMouseMove = (e: MouseEvent) => {
+      setInViewport(true);
       updatePosition(e.clientX, e.clientY);
-      updateHover(e.clientX, e.clientY);
+      pendingHover.current = { x: e.clientX, y: e.clientY };
+      if (hoverRaf.current === null) {
+        hoverRaf.current = requestAnimationFrame(() => {
+          hoverRaf.current = null;
+          const { x, y } = pendingHover.current;
+          updateHover(x, y);
+        });
+      }
     };
 
     const handleMouseDown = (e: MouseEvent) => {
-      if (textLeaveTimeout.current) {
-        clearTimeout(textLeaveTimeout.current);
-        textLeaveTimeout.current = null;
-      }
+      clearTextLeaveTimeout();
+      clearPillLeaveTimeout();
       const el = document.elementFromPoint(e.clientX, e.clientY);
+      const target = getCursorTarget(el);
       const isOverPostBody = !!el?.closest("[data-blog-post-body]");
       const textInfo = getTextHoverInfo(e.clientX, e.clientY);
       const overText = isBlogContentPage && isOverPostBody && textInfo.overText;
       setWasOverTextOnClick(overText);
       if (overText) setTextCursorHeight(textInfo.height);
+      if (target) setPillContent(null);
       setCursorState("click");
     };
     const handleMouseUp = () => {
       const { x: px, y: py } = lastPos.current;
       const el = document.elementFromPoint(px, py);
-      const target = getCursorTarget(el);
       const isOverPostBody = !!el?.closest("[data-blog-post-body]");
       const textInfo = getTextHoverInfo(px, py);
-      setPillContent(target);
-      if (target) setCursorState("pill");
-      else if (isBlogContentPage && isOverPostBody && textInfo.overText) {
+      setWasOverTextOnClick(false);
+      setPillContent(null);
+      if (isBlogContentPage && isOverPostBody && textInfo.overText) {
         setTextCursorHeight(textInfo.height);
         setCursorState("text");
-      } else setCursorState("default");
+      } else {
+        setCursorState("default");
+      }
     };
+
+    const handleBodyLeave = () => setInViewport(false);
+    const handleBodyEnter = () => setInViewport(true);
 
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mousedown", handleMouseDown);
     window.addEventListener("mouseup", handleMouseUp);
+    document.body.addEventListener("mouseleave", handleBodyLeave);
+    document.body.addEventListener("mouseenter", handleBodyEnter);
     return () => {
-      if (textLeaveTimeout.current) {
-        clearTimeout(textLeaveTimeout.current);
-        textLeaveTimeout.current = null;
+      clearTextLeaveTimeout();
+      clearPillLeaveTimeout();
+      if (hoverRaf.current !== null) {
+        cancelAnimationFrame(hoverRaf.current);
+        hoverRaf.current = null;
       }
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mousedown", handleMouseDown);
       window.removeEventListener("mouseup", handleMouseUp);
+      document.body.removeEventListener("mouseleave", handleBodyLeave);
+      document.body.removeEventListener("mouseenter", handleBodyEnter);
     };
-  }, [mounted, isBlogContentPage, updatePosition, updateHover]);
+  }, [
+    mounted,
+    isBlogContentPage,
+    updatePosition,
+    updateHover,
+    clearTextLeaveTimeout,
+    clearPillLeaveTimeout,
+  ]);
 
   // Only show on pointer devices (not touch)
   const [hasPointer, setHasPointer] = useState(false);
@@ -292,6 +334,7 @@ export function CustomCursor() {
 
     const measure = () => {
       const w = Math.max(el.offsetWidth, el.scrollWidth) + 2;
+      lastPillWidth.current = w;
       setPillWidth(w);
     };
 
@@ -328,14 +371,16 @@ export function CustomCursor() {
   const isText =
     cursorState === "text" ||
     (cursorState === "click" && wasOverTextOnClick);
+  const resolvedPillWidth = pillWidth || lastPillWidth.current || 10;
 
   return (
     <motion.div
       className="fixed top-0 left-0 w-0 h-0 pointer-events-none"
       style={{
-        x: pos.x,
-        y: pos.y,
+        x: cursorX,
+        y: cursorY,
         zIndex: 2147483647,
+        opacity: inViewport ? 1 : 0,
       }}
     >
       {isPill && (
@@ -361,7 +406,7 @@ export function CustomCursor() {
           border: isPill ? "1px solid var(--background)" : "none",
         }}
         animate={{
-          width: isPill ? pillWidth || 10 : isText ? 2 : 10,
+          width: isPill ? resolvedPillWidth : isText ? 2 : 10,
           height: isPill
             ? 24
             : isText
