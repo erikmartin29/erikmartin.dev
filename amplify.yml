@@ -6,11 +6,13 @@ applications:
       phases:
         preBuild:
           commands:
+            - nvm use
+            - node -v
             - npm install -g pnpm
             - pnpm install
         build:
           commands:
-            - pnpm build
+            - pnpm --filter web build
       artifacts:
         baseDirectory: apps/web/.next
         files:
