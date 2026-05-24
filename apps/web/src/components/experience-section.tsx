@@ -1,27 +1,11 @@
-"use client";
-
-import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import { urlFor } from "@/sanity/client";
-import type { HOME_QUERYResult } from "@/sanity/sanity.types";
-
-type ExperienceItem = NonNullable<HOME_QUERYResult["experience"]>[number];
-type ExperienceGroup = {
-  company: string;
-  companyUrl: string | null | undefined;
-  logo: ExperienceItem["logo"];
-  roles: ExperienceItem[];
-};
+import type { ExperienceGroup } from "@/lib/build-experience-groups";
 
 interface ExperienceSectionProps {
   experienceGroups: ExperienceGroup[];
   resumeURL?: string | null;
 }
-
-// Geist Mono: ~0.6 char width per px (14px ≈ 8.4px/char, 12px ≈ 7.2px/char)
-const PX_PER_CHAR_MOBILE = 7.2;
-const PX_PER_CHAR_DESKTOP = 8.4;
-const MIN_DASHES = 3;
 
 function formatDate(role: ExperienceItem): string {
   const isSingleDate = role.dateDisplayType === "single" && role.singleDate;
@@ -32,68 +16,27 @@ function formatDate(role: ExperienceItem): string {
     ? new Date(role.startDate).getUTCFullYear()
     : null;
   const endYear = role.endDate
-    ? new Date(role.endDate).getUTCFullYear().toString()
-    : "PRESENT";
-  return startYear ? `${startYear}-${endYear}` : endYear;
-}
-
-function buildRoleLine(
-  role: ExperienceItem,
-  charsPerLine: number
-): string {
-  const title = (role.jobTitle ?? "").toUpperCase();
-  const dateStr = formatDate(role).toUpperCase();
-  const dashCount = Math.max(
-    MIN_DASHES,
-    charsPerLine - title.length - dateStr.length - 2
-  );
-  return `${title} ${"-".repeat(dashCount)} ${dateStr}`;
+    ? "-" + new Date(role.endDate).getUTCFullYear().toString()
+    : "-NOW";
+  return startYear ? `${startYear}${endYear}` : endYear;
 }
 
 export function ExperienceSection({
   experienceGroups,
   resumeURL,
 }: ExperienceSectionProps) {
-  const textRef = useRef<HTMLDivElement>(null);
-  const [charsPerLine, setCharsPerLine] = useState(49); // desktop default
-
-  useEffect(() => {
-    const el = textRef.current;
-    if (!el) return;
-
-    const updateChars = () => {
-      if (!el) return;
-      const containerWidth = el.offsetWidth;
-      const isMobile = window.matchMedia("(max-width: 767px)").matches;
-      // Subtract logo width + gap to get text area width
-      const logoGap = isMobile ? 20 + 8 : 26 + 12;
-      const textWidth = Math.max(0, containerWidth - logoGap);
-      const pxPerChar = isMobile ? PX_PER_CHAR_MOBILE : PX_PER_CHAR_DESKTOP;
-      const chars = Math.floor(textWidth / pxPerChar);
-      setCharsPerLine(Math.max(20, chars));
-    };
-
-    updateChars();
-    const ro = new ResizeObserver(updateChars);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
   return (
-    <div ref={textRef} className="w-full max-w-[453px]">
+    <div className="w-full max-w-[453px]">
       <div className="flex flex-col gap-0.5">
         {experienceGroups.map((group) => (
           <div key={group.company} className="flex gap-2 md:gap-3 items-start">
             {/* Company logo — scaled for mobile */}
-            <div
-              className="relative rounded shrink-0 mt-px overflow-hidden w-5 h-5 md:w-[26px] md:h-[26px]"
-            >
+            <div className="relative rounded shrink-0 mt-px overflow-hidden w-4 h-4 md:w-[24px] md:h-[24px]">
               {group.logo?.asset && (
                 <Image
-                  src={urlFor(group.logo).width(52).height(52).url()}
+                  src={urlFor(group.logo).width(100).height(100).url()}
                   alt={group.company}
                   fill
-                  className="object-cover"
                 />
               )}
             </div>
@@ -117,9 +60,20 @@ export function ExperienceSection({
               {group.roles.map((role) => (
                 <p
                   key={role._id}
-                  className="m-0 text-foreground/80 whitespace-nowrap"
+                  className="m-0 text-foreground/80 flex min-w-0 items-baseline gap-1"
                 >
-                  {buildRoleLine(role, charsPerLine)}
+                  <span className="shrink-0 uppercase">
+                    {role.jobTitle ?? ""}
+                  </span>
+                  <span
+                    className="flex-1 min-w-[1ch] overflow-hidden whitespace-nowrap"
+                    aria-hidden
+                  >
+                    {"_".repeat(200)}
+                  </span>
+                  <span className="shrink-0 tabular-nums">
+                    {formatDate(role)}
+                  </span>
                 </p>
               ))}
             </div>

@@ -95,6 +95,7 @@ export type Experience = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  order?: number;
   dateDisplayType?: "range" | "single";
   startDate?: string;
   endDate?: string;
@@ -405,7 +406,7 @@ export type AllSanitySchemaTypes = Skill | SanityImageCrop | SanityImageHotspot 
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ../web/src/sanity/queries.ts
 // Variable: HOME_QUERY
-// Query: {  "home": *[_type == "home"][0] {    heroHeading,    heroSubheading  },  "profile": *[_type == "profile"][0] {    fullName,    profileImage,    email,    socialLinks {      github,      linkedin    },    "resumeURL": resume.asset->url  },  "experience": *[_type == "experience"] | order(coalesce(startDate, singleDate) desc) {    _id,    jobTitle,    company,    companyUrl,    logo,    dateDisplayType,    startDate,    endDate,    singleDate  }}
+// Query: {  "home": *[_type == "home"][0] {    heroHeading,    heroSubheading  },  "profile": *[_type == "profile"][0] {    fullName,    profileImage,    email,    socialLinks {      github,      linkedin    },    "resumeURL": resume.asset->url  },  "experience": *[_type == "experience"] | order(order asc, coalesce(startDate, singleDate) desc) {    _id,    order,    jobTitle,    company,    companyUrl,    logo,    dateDisplayType,    startDate,    endDate,    singleDate  }}
 export type HOME_QUERYResult = {
   home: {
     heroHeading: string | null;
@@ -434,6 +435,7 @@ export type HOME_QUERYResult = {
   } | null;
   experience: Array<{
     _id: string;
+    order: number | null;
     jobTitle: string | null;
     company: string | null;
     companyUrl: string | null;
@@ -625,7 +627,7 @@ export type POST_QUERYResult = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "{\n  \"home\": *[_type == \"home\"][0] {\n    heroHeading,\n    heroSubheading\n  },\n  \"profile\": *[_type == \"profile\"][0] {\n    fullName,\n    profileImage,\n    email,\n    socialLinks {\n      github,\n      linkedin\n    },\n    \"resumeURL\": resume.asset->url\n  },\n  \"experience\": *[_type == \"experience\"] | order(coalesce(startDate, singleDate) desc) {\n    _id,\n    jobTitle,\n    company,\n    companyUrl,\n    logo,\n    dateDisplayType,\n    startDate,\n    endDate,\n    singleDate\n  }\n}": HOME_QUERYResult;
+    "{\n  \"home\": *[_type == \"home\"][0] {\n    heroHeading,\n    heroSubheading\n  },\n  \"profile\": *[_type == \"profile\"][0] {\n    fullName,\n    profileImage,\n    email,\n    socialLinks {\n      github,\n      linkedin\n    },\n    \"resumeURL\": resume.asset->url\n  },\n  \"experience\": *[_type == \"experience\"] | order(order asc, coalesce(startDate, singleDate) desc) {\n    _id,\n    order,\n    jobTitle,\n    company,\n    companyUrl,\n    logo,\n    dateDisplayType,\n    startDate,\n    endDate,\n    singleDate\n  }\n}": HOME_QUERYResult;
     "{\n  \"profile\": *[_type == \"profile\"][0] {\n    bio[] {\n      ...,\n      _type == \"image\" => { ..., asset-> }\n    }\n  }\n}": ABOUT_QUERYResult;
     "*[_type == \"project\"] | order(order asc, _createdAt desc) {\n  _id,\n  title,\n  tagline,\n  github,\n  link,\n  \"thumbnailUrl\": thumbnail.asset->url,\n  \"videoUrl\": thumbnailVideo.asset->url,\n  \"projectPost\": projectPost-> { slug }\n}": PROJECTS_QUERYResult;
     "*[_type == \"post\"] | order(publishedAt desc) {\n  _id,\n  title,\n  slug,\n  excerpt,\n  publishedAt,\n  \"categories\": categories[]->title\n}": BLOG_QUERYResult;

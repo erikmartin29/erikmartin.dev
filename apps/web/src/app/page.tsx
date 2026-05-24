@@ -1,6 +1,7 @@
 import { ContentBox } from "@/components/ui/content-box";
 import { WorkFolderLink } from "@/components/work-folder-link";
 import { ExperienceSection } from "@/components/experience-section";
+import { buildExperienceGroups } from "@/lib/build-experience-groups";
 import { sanityFetch } from "@/sanity/live";
 import { HOME_QUERY } from "@/sanity/queries";
 import type { HOME_QUERYResult } from "@/sanity/sanity.types";
@@ -11,30 +12,7 @@ export default async function Home() {
   const { data } = await sanityFetch<HOME_QUERYResult>({ query: HOME_QUERY });
   const { home, profile, experience } = data;
 
-  // group consecutive experiences by date and company
-  type ExperienceItem = NonNullable<typeof experience>[number];
-  const experienceGroups = (experience ?? []).reduce<
-    {
-      company: string;
-      companyUrl: string | null | undefined;
-      logo: ExperienceItem["logo"];
-      roles: ExperienceItem[];
-    }[]
-  >((acc, job) => {
-    const company = job.company ?? "";
-    const existing = acc.find((g) => g.company === company);
-    if (existing) {
-      existing.roles.push(job);
-    } else {
-      acc.push({
-        company,
-        companyUrl: job.companyUrl,
-        logo: job.logo,
-        roles: [job],
-      });
-    }
-    return acc;
-  }, []);
+  const experienceGroups = buildExperienceGroups(experience);
 
   // parse text between ** as bold
   const parseBold = (text: string) =>
@@ -128,7 +106,7 @@ export default async function Home() {
 
       <ContentBox innerClassName="py-[19px] md:py-[38px]" />
 
-      <ContentBox innerClassName="py-[15px] flex flex-col items-center">
+      <ContentBox innerClassName="py-[15px] flex flex-col items-center justify-center">
         <ExperienceSection
           experienceGroups={experienceGroups}
           resumeURL={profile?.resumeURL}

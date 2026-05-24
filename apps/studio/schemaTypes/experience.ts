@@ -6,6 +6,14 @@ export const experienceType = defineType({
   type: 'document',
   fields: [
     defineField({
+      name: 'order',
+      title: 'Display Order',
+      type: 'number',
+      description:
+        'Controls homepage order. Lower numbers appear first. Roles at the same company are grouped together — use the same order for every role at a company, and increment order for roles within that company.',
+      validation: (Rule) => Rule.integer().min(0),
+    }),
+    defineField({
       name: 'jobTitle',
       title: 'Job Title',
       type: 'string',

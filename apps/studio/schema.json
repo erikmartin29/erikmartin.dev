@@ -369,6 +369,13 @@
           "type": "string"
         }
       },
+      "order": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "number"
+        },
+        "optional": true
+      },
       "jobTitle": {
         "type": "objectAttribute",
         "value": {

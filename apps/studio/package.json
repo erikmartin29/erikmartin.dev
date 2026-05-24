@@ -10,16 +10,18 @@
     "start": "sanity start",
     "build": "sanity build",
     "deploy": "sanity deploy",
+    "deploy:schema": "sanity schema deploy",
+    "migrate:experience-order": "sanity migration run experience-display-order --no-dry-run --no-confirm",
     "deploy-graphql": "sanity graphql deploy"
   },
   "keywords": [
     "sanity"
   ],
   "dependencies": {
-    "@sanity/vision": "^5.17.1",
+    "@sanity/vision": "^5.26.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "sanity": "^5.17.1",
+    "sanity": "^5.26.0",
     "styled-components": "^6.1.19"
   },
   "devDependencies": {
