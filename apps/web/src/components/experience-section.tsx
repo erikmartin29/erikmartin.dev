@@ -1,6 +1,9 @@
 import Image from "next/image";
 import { urlFor } from "@/sanity/client";
-import type { ExperienceGroup } from "@/lib/build-experience-groups";
+import type {
+  ExperienceGroup,
+  ExperienceItem,
+} from "@/lib/build-experience-groups";
 
 interface ExperienceSectionProps {
   experienceGroups: ExperienceGroup[];

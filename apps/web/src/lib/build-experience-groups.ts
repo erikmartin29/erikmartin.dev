@@ -15,7 +15,10 @@ function experienceSortDate(job: ExperienceItem): string {
   return job.singleDate ?? job.startDate ?? "";
 }
 
-function compareOrder(a: number | undefined, b: number | undefined): number {
+function compareOrder(
+  a: number | null | undefined,
+  b: number | null | undefined
+): number {
   const aOrder = a ?? Number.MAX_SAFE_INTEGER;
   const bOrder = b ?? Number.MAX_SAFE_INTEGER;
   if (aOrder !== bOrder) return aOrder - bOrder;
