@@ -26,8 +26,7 @@ Pages (`/`, `/work`, `/about`, `/blog`, `/blog/[slug]`) are statically generated
 
 ### Sanity webhook setup (manual)
 
-1. Choose a random secret and set it as `SANITY_REVALIDATE_SECRET` in the hosting environment (Amplify environment variables), then redeploy. `amplify.yml` copies it into `apps/web/.env.production` during the build, because Amplify's SSR runtime only sees variables written there.
-2. In Sanity (manage.sanity.io, project `5l61z3ol`, API, Webhooks) create a webhook:
+1. Choose a random secret and set it as `SANITY_REVALIDATE_SECRET` in the hosting environment (Amplify environment variables), then redeploy.2. In Sanity (manage.sanity.io, project `5l61z3ol`, API, Webhooks) create a webhook:
    - URL: `https://<your-domain>/api/revalidate`
    - Dataset: `production`
    - Trigger on: Create, Update, Delete
