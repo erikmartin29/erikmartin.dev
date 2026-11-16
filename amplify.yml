@@ -13,6 +13,7 @@ applications:
             - pnpm install --frozen-lockfile
         build:
           commands:
+            - env | grep -e SANITY_REVALIDATE_SECRET >> apps/web/.env.production
             - pnpm --filter web build
       artifacts:
         baseDirectory: apps/web/.next
