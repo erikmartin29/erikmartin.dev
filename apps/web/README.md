@@ -20,24 +20,6 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Caching and on-demand revalidation
-
-Pages (`/`, `/work`, `/about`, `/blog`, `/blog/[slug]`) are statically generated. Sanity reads go through the Sanity API CDN and the Next.js data cache (`sanityFetch` in `src/sanity/live.ts`), tagged by document type and revalidated after 1 hour as a fallback. A Sanity webhook refreshes content right after a publish.
-
-### Sanity webhook setup (manual)
-
-1. Choose a random secret and set it as `SANITY_REVALIDATE_SECRET` in the hosting environment (Amplify environment variables), then redeploy.
-2. In Sanity (manage.sanity.io, project `5l61z3ol`, API, Webhooks) create a webhook:
-   - URL: `https://<your-domain>/api/revalidate`
-   - Dataset: `production`
-   - Trigger on: Create, Update, Delete
-   - Filter: `_type in ["home", "profile", "experience", "project", "post", "category"]`
-   - Projection: `{_type, "slug": slug.current}`
-   - HTTP method: POST
-   - Secret: the same value as `SANITY_REVALIDATE_SECRET`
-   - Drafts: off
-3. The route (`src/app/api/revalidate/route.ts`) returns 401 if the secret is missing or the signature is invalid, and calls `revalidateTag(tag, { expire: 0 })` for the tags mapped to the document `_type`.
-
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
