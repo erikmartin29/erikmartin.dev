@@ -1,4 +1,3 @@
-import { SanityLive } from "@/sanity/live";
 import { Navbar } from "@/components/layout/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { CustomCursor } from "@/components/custom-cursor";
@@ -66,7 +65,6 @@ export default function RootLayout({
           <main className="flex-1 w-full pt-12 md:pt-0 pb-12 relative">
             {children}
           </main>
-          <SanityLive />
         </ThemeProvider>
       </body>
     </html>

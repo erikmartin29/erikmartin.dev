@@ -70,6 +70,7 @@ export function ProjectCard({
             loop
             muted
             playsInline
+            preload="none"
             className={`absolute inset-0 z-0 w-full h-full object-cover transition-opacity ease-out ${
               videoReady ? "opacity-100" : "opacity-0"
             }`}
