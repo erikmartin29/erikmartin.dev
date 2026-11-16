@@ -13,6 +13,9 @@ applications:
             - pnpm install --frozen-lockfile
         build:
           commands:
+            # Amplify's SSR runtime only sees console env vars written into .env.production.
+            # `|| true` keeps the build alive if the secret isn't set (the route then returns 401).
+            - env | grep -e SANITY_REVALIDATE_SECRET >> apps/web/.env.production || true
             - pnpm --filter web build
       artifacts:
         baseDirectory: apps/web/.next
