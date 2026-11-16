@@ -68,6 +68,7 @@ const FALLBACK_POSTS: BLOG_QUERYResult = [
 export default async function BlogPage() {
   const { data: posts } = await sanityFetch<BLOG_QUERYResult>({
     query: BLOG_QUERY,
+    tags: ["post", "category"],
   });
 
   const displayPosts: BLOG_QUERYResult =

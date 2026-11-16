@@ -2,7 +2,7 @@ import { ContentBox } from "@/components/ui/content-box";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { sanityFetch } from "@/sanity/live";
-import { POST_QUERY } from "@/sanity/queries";
+import { POST_QUERY, POST_SLUGS_QUERY } from "@/sanity/queries";
 import type { POST_QUERYResult } from "@/sanity/sanity.types";
 import { PortableText } from "@portabletext/react";
 import { projectPortableTextComponents } from "@/components/portable-text";
@@ -27,11 +27,22 @@ function formatMetaDate(iso: string) {
     .toUpperCase();
 }
 
+// Pre-render existing posts at build; posts published later render on demand
+// (dynamicParams defaults to true) and are then cached like the rest.
+export async function generateStaticParams() {
+  const { data: slugs } = await sanityFetch<string[]>({
+    query: POST_SLUGS_QUERY,
+    tags: ["post"],
+  });
+  return (slugs ?? []).map((slug) => ({ slug }));
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const { data: post } = await sanityFetch<POST_QUERYResult>({
     query: POST_QUERY,
     params: { slug },
+    tags: ["post", "category"],
   });
   if (!post) return { title: "Post Not Found" };
   return {
@@ -45,6 +56,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const { data: post } = await sanityFetch<POST_QUERYResult>({
     query: POST_QUERY,
     params: { slug },
+    tags: ["post", "category"],
   });
 
   if (!post) notFound();

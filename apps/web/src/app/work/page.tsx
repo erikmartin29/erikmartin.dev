@@ -13,6 +13,7 @@ export const metadata = {
 export default async function WorkPage() {
   const { data: projects } = await sanityFetch<PROJECTS_QUERYResult>({
     query: PROJECTS_QUERY,
+    tags: ["project", "post"],
   });
 
   return (

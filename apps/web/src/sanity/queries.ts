@@ -71,3 +71,5 @@ export const POST_QUERY = defineQuery(`*[_type == "post" && slug.current == $slu
     _type == "video" => { ..., "videoUrl": asset.asset->url }
   }
 }`);
+
+export const POST_SLUGS_QUERY = defineQuery(`*[_type == "post" && defined(slug.current)].slug.current`);

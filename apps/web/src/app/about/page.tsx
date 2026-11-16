@@ -11,7 +11,10 @@ export const metadata = {
 };
 
 export default async function AboutPage() {
-  const { data } = await sanityFetch<ABOUT_QUERYResult>({ query: ABOUT_QUERY });
+  const { data } = await sanityFetch<ABOUT_QUERYResult>({
+    query: ABOUT_QUERY,
+    tags: ["profile"],
+  });
   const { profile } = data;
 
   return (

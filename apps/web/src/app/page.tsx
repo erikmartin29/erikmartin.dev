@@ -9,7 +9,10 @@ import { urlFor } from "@/sanity/client";
 import Image from "next/image";
 
 export default async function Home() {
-  const { data } = await sanityFetch<HOME_QUERYResult>({ query: HOME_QUERY });
+  const { data } = await sanityFetch<HOME_QUERYResult>({
+    query: HOME_QUERY,
+    tags: ["home", "profile", "experience"],
+  });
   const { home, profile, experience } = data;
 
   const experienceGroups = buildExperienceGroups(experience);
