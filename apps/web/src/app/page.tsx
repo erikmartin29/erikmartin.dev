@@ -39,6 +39,7 @@ export default async function Home() {
               src={urlFor(profile.profileImage).width(500).height(500).url()}
               alt={profile.fullName ?? "Profile"}
               fill
+              sizes="174px"
               className="object-cover"
               priority
             />
