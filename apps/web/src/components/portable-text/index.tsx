@@ -8,7 +8,7 @@ import type { ComponentType } from "react";
 const SANITY_PROJECT_ID = "5l61z3ol";
 const SANITY_DATASET = "production";
 
-const componentRegistry: Record<string, ComponentType<any>> = {};
+const componentRegistry: Record<string, ComponentType<Record<string, unknown>>> = {};
 
 export const projectPortableTextComponents: PortableTextComponents = {
   types: {
@@ -150,6 +150,6 @@ export const projectPortableTextComponents: PortableTextComponents = {
   },
 };
 
-export function registerComponent(name: string, component: ComponentType<any>) {
+export function registerComponent(name: string, component: ComponentType<Record<string, unknown>>) {
   componentRegistry[name] = component;
 }
