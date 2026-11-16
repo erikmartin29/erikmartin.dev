@@ -30,8 +30,9 @@ export function ProjectCard({
 
   const handleMouseEnter = useCallback(() => {
     hoverTimeoutRef.current = setTimeout(() => {
-      setVideoReady(true);
-      videoRef.current?.play();
+      // The thumbnail stays visible (it acts as the poster) until the video
+      // actually starts playing; see onPlaying below.
+      videoRef.current?.play().catch(() => {});
     }, HOVER_DELAY_MS);
   }, []);
 
@@ -71,6 +72,7 @@ export function ProjectCard({
             muted
             playsInline
             preload="none"
+            onPlaying={() => setVideoReady(true)}
             className={`absolute inset-0 z-0 w-full h-full object-cover transition-opacity ease-out ${
               videoReady ? "opacity-100" : "opacity-0"
             }`}
